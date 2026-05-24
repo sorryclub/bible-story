@@ -1,24 +1,23 @@
-"use client";
-
-import { use } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   ArrowLeft,
   BookOpen,
   Star,
   Users,
-  ChevronLeft,
   ChevronRight,
   Info,
 } from "lucide-react";
-import { getBook, getAllBooks, categories } from "@/data/books";
-import { characters } from "@/data/characters";
+import { getBook, getAllBooks, categories, getAllCharacters } from "@/lib/db";
 import CharacterAvatar from "@/components/CharacterAvatar";
+import AnimatedSection from "./AnimatedSection";
 
-export default function BookDetailPage({ params }) {
-  const { id } = use(params);
-  const book = getBook(id);
+export default async function BookDetailPage({ params }) {
+  const { id } = await params;
+  const [book, allBooks, allCharacters] = await Promise.all([
+    getBook(id),
+    getAllBooks(),
+    getAllCharacters(),
+  ]);
 
   if (!book) {
     return (
@@ -42,11 +41,10 @@ export default function BookDetailPage({ params }) {
     );
   }
 
-  const relatedCharacters = characters.filter((c) =>
+  const relatedCharacters = allCharacters.filter((c) =>
     c.books.includes(book.id)
   );
 
-  const allBooks = getAllBooks();
   const currentIndex = allBooks.findIndex((b) => b.id === book.id);
   const prevBook = currentIndex > 0 ? allBooks[currentIndex - 1] : null;
   const nextBook =
@@ -67,11 +65,7 @@ export default function BookDetailPage({ params }) {
             성경 목록
           </Link>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <AnimatedSection duration={0.5}>
             {/* Badges */}
             <div className="flex items-center gap-2 mb-4">
               <span
@@ -128,7 +122,7 @@ export default function BookDetailPage({ params }) {
                 </p>
               </div>
             )}
-          </motion.div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -138,11 +132,7 @@ export default function BookDetailPage({ params }) {
           {/* Main (2/3) */}
           <div className="md:col-span-2 space-y-10">
             {/* Highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.5 }}
-            >
+            <AnimatedSection delay={0.15} duration={0.5}>
               <h2 className="text-lg font-bold text-stone-800 mb-5 flex items-center gap-2">
                 <BookOpen size={18} className="text-stone-400" />
                 주요 내용
@@ -151,11 +141,10 @@ export default function BookDetailPage({ params }) {
               {book.highlights && book.highlights.length > 0 ? (
                 <div className="space-y-3">
                   {book.highlights.map((highlight, i) => (
-                    <motion.div
+                    <AnimatedSection
                       key={i}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 + i * 0.04, duration: 0.4 }}
+                      delay={0.2 + i * 0.04}
+                      duration={0.4}
                       className="flex gap-4 p-4 rounded-lg bg-white border border-stone-100"
                     >
                       <div className="flex items-start gap-3 w-full">
@@ -179,7 +168,7 @@ export default function BookDetailPage({ params }) {
                           </p>
                         </div>
                       </div>
-                    </motion.div>
+                    </AnimatedSection>
                   ))}
                 </div>
               ) : (
@@ -187,14 +176,10 @@ export default function BookDetailPage({ params }) {
                   하이라이트 정보가 아직 준비되지 않았습니다.
                 </p>
               )}
-            </motion.div>
+            </AnimatedSection>
 
             {/* Chapter Grid */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
+            <AnimatedSection delay={0.3} duration={0.5}>
               <h2 className="text-lg font-bold text-stone-800 mb-5 flex items-center gap-2">
                 <Star size={18} className="text-stone-400" />
                 챕터 ({book.chapters}장)
@@ -212,18 +197,13 @@ export default function BookDetailPage({ params }) {
                   )
                 )}
               </div>
-            </motion.div>
+            </AnimatedSection>
           </div>
 
           {/* Sidebar (1/3) */}
           <div className="space-y-6">
             {/* Info Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="bg-white rounded-xl p-5 border border-stone-100"
-            >
+            <AnimatedSection delay={0.2} duration={0.5} className="bg-white rounded-xl p-5 border border-stone-100">
               <h3 className="text-base font-semibold text-stone-700 mb-4 flex items-center gap-1.5">
                 <Info size={14} className="text-stone-400" />
                 기본 정보
@@ -252,16 +232,11 @@ export default function BookDetailPage({ params }) {
                   </span>
                 </div>
               </div>
-            </motion.div>
+            </AnimatedSection>
 
             {/* Related Characters */}
             {relatedCharacters.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="bg-white rounded-xl p-5 border border-stone-100"
-              >
+              <AnimatedSection delay={0.3} duration={0.5} className="bg-white rounded-xl p-5 border border-stone-100">
                 <h3 className="text-base font-semibold text-stone-700 mb-4 flex items-center gap-1.5">
                   <Users size={14} className="text-stone-400" />
                   등장 인물
@@ -283,16 +258,11 @@ export default function BookDetailPage({ params }) {
                     </Link>
                   ))}
                 </div>
-              </motion.div>
+              </AnimatedSection>
             )}
 
             {/* Prev/Next Navigation */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="bg-white rounded-xl p-5 border border-stone-100"
-            >
+            <AnimatedSection delay={0.4} duration={0.5} className="bg-white rounded-xl p-5 border border-stone-100">
               <h3 className="text-base font-semibold text-stone-700 mb-4 flex items-center gap-1.5">
                 <BookOpen size={14} className="text-stone-400" />
                 다른 책 보기
@@ -329,7 +299,7 @@ export default function BookDetailPage({ params }) {
                   </Link>
                 )}
               </div>
-            </motion.div>
+            </AnimatedSection>
           </div>
         </div>
       </section>

@@ -1,8 +1,4 @@
-"use client";
-
-import { use, useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   BookOpen,
@@ -10,73 +6,10 @@ import {
   Star,
   Users,
   ChevronRight,
-  X,
 } from "lucide-react";
-import { characters, getCharacter } from "@/data/characters";
-import { getBook } from "@/data/books";
-import { timelineEvents } from "@/data/timeline";
+import { getCharacter, getAllCharacters, getBook, getAllTimelineEvents } from "@/lib/db";
 import CharacterAvatar from "@/components/CharacterAvatar";
-
-// 구절 참조를 기준으로 단락을 나누고, 구절은 뱃지로 표시, 장면 이미지 삽입
-function StyledDescription({ text, characterId }) {
-  const versePattern = /(\([^)]*\d+[:\d\-,\s장]*[^)]*\))/g;
-  const normalized = text.replace(/(\([^)]*\d+[:\d\-,\s장]*[^)]*\))\.\s*/g, "$1\n");
-  const paragraphs = normalized.split("\n").filter(p => p.trim());
-
-  return (
-    <div className="space-y-6">
-      {paragraphs.map((para, pi) => {
-        const parts = para.split(versePattern);
-        const r2 = process.env.NEXT_PUBLIC_R2_URL || "";
-        const imgSrc = r2 ? `${r2}/stories/${characterId}_${pi}.jpg` : `/stories/${characterId}_${pi}.jpg`;
-
-        return (
-          <div key={pi}>
-            {/* 장면 이미지 */}
-            <StoryImage src={imgSrc} index={pi} />
-
-            {/* 텍스트 */}
-            <p className="text-stone-700 text-lg leading-[2]">
-              {parts.map((part, i) => {
-                if (versePattern.test(part)) {
-                  versePattern.lastIndex = 0;
-                  return (
-                    <span
-                      key={i}
-                      className="inline-flex items-center ml-1 px-2 py-0.5 rounded-md bg-stone-100 text-stone-500 text-[13px] font-medium whitespace-nowrap align-middle"
-                    >
-                      {part.slice(1, -1)}
-                    </span>
-                  );
-                }
-                const cleaned = part.replace(/^\.\s*/, "").replace(/\s+$/, "");
-                if (!cleaned) return null;
-                return <span key={i}>{cleaned}</span>;
-              })}
-            </p>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-// 장면 이미지 컴포넌트 (이미지 없으면 숨김)
-function StoryImage({ src, index }) {
-  const [visible, setVisible] = useState(true);
-  if (!visible) return null;
-  return (
-    <div className="mb-4 rounded-xl overflow-hidden bg-stone-100">
-      <img
-        src={src}
-        alt={`장면 ${index + 1}`}
-        className="w-full h-auto object-cover max-h-[300px]"
-        onError={() => setVisible(false)}
-        loading="lazy"
-      />
-    </div>
-  );
-}
+import { StyledDescription, CharacterHeroAvatar } from "./CharacterDetailClient";
 
 // 주요 사건의 (창세기 2:7) 참조를 분리하여 표시
 function StyledEvent({ text }) {
@@ -92,10 +25,9 @@ function StyledEvent({ text }) {
   return <p className="text-stone-700 text-base">{text}</p>;
 }
 
-export default function CharacterDetailPage({ params }) {
-  const { id } = use(params);
-  const character = getCharacter(id);
-  const [imageOpen, setImageOpen] = useState(false);
+export default async function CharacterDetailPage({ params }) {
+  const { id } = await params;
+  const character = await getCharacter(id);
 
   if (!character) {
     return (
@@ -120,13 +52,24 @@ export default function CharacterDetailPage({ params }) {
     );
   }
 
+  // Fetch related data in parallel
+  const [allCharacters, allTimelineEvents, ...relatedBookResults] = await Promise.all([
+    getAllCharacters(),
+    getAllTimelineEvents(),
+    ...character.books.map((bookId) => getBook(bookId)),
+  ]);
+
+  // Build character lookup
+  const characterMap = {};
+  allCharacters.forEach((c) => { characterMap[c.id] = c; });
+
   const relatedCharacters = character.relatedCharacters
-    .map(getCharacter)
+    .map((cid) => characterMap[cid])
     .filter(Boolean);
 
-  const relatedBooks = character.books.map(getBook).filter(Boolean);
+  const relatedBooks = relatedBookResults.filter(Boolean);
 
-  const relatedEvents = timelineEvents.filter((e) =>
+  const relatedEvents = allTimelineEvents.filter((e) =>
     e.characters.includes(character.id)
   );
 
@@ -144,22 +87,9 @@ export default function CharacterDetailPage({ params }) {
           </Link>
 
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="cursor-pointer"
-              onClick={() => setImageOpen(true)}
-            >
-              <CharacterAvatar character={character} size={160} />
-            </motion.div>
+            <CharacterHeroAvatar character={character} />
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-center md:text-left"
-            >
+            <div className="text-center md:text-left">
               <h1 className="text-3xl md:text-4xl font-bold text-stone-900 mb-1">
                 {character.name}
               </h1>
@@ -173,7 +103,7 @@ export default function CharacterDetailPage({ params }) {
               <p className="text-stone-500 leading-relaxed max-w-lg">
                 {character.shortDesc}
               </p>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -184,26 +114,16 @@ export default function CharacterDetailPage({ params }) {
           {/* Main content - 2/3 */}
           <div className="md:col-span-2 space-y-8">
             {/* Story */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white rounded-2xl p-8 border border-stone-200 shadow-sm"
-            >
+            <div className="bg-white rounded-2xl p-8 border border-stone-200 shadow-sm">
               <h2 className="text-xl font-bold text-stone-900 mb-6 flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-stone-500" />
                 이야기
               </h2>
               <StyledDescription text={character.description} characterId={character.id} />
-            </motion.div>
+            </div>
 
             {/* Key Events */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white rounded-2xl p-8 border border-stone-200 shadow-sm"
-            >
+            <div className="bg-white rounded-2xl p-8 border border-stone-200 shadow-sm">
               <h2 className="text-xl font-bold text-stone-900 mb-6 flex items-center gap-2">
                 <Star className="w-5 h-5 text-stone-500" />
                 주요 사건
@@ -218,16 +138,11 @@ export default function CharacterDetailPage({ params }) {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
             {/* Timeline Events */}
             {relatedEvents.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="bg-white rounded-xl p-6 border border-stone-200"
-              >
+              <div className="bg-white rounded-xl p-6 border border-stone-200">
                 <h2 className="text-xl font-bold text-stone-900 mb-4 flex items-center gap-2">
                   <Clock className="w-5 h-5 text-stone-600" />
                   타임라인 속 사건
@@ -253,19 +168,14 @@ export default function CharacterDetailPage({ params }) {
                     </div>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
 
           {/* Sidebar - 1/3 */}
           <div className="space-y-6">
             {/* Key Verses */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-stone-50 rounded-xl p-5 border border-stone-200"
-            >
+            <div className="bg-stone-50 rounded-xl p-5 border border-stone-200">
               <h3 className="font-bold text-stone-900 mb-3 text-base flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-stone-600" />
                 핵심 성경 구절
@@ -287,16 +197,11 @@ export default function CharacterDetailPage({ params }) {
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
 
             {/* Related Books */}
             {relatedBooks.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="bg-white rounded-xl p-5 border border-stone-200"
-              >
+              <div className="bg-white rounded-xl p-5 border border-stone-200">
                 <h3 className="font-bold text-stone-900 mb-3 text-base flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-stone-600" />
                   관련 성경
@@ -315,17 +220,12 @@ export default function CharacterDetailPage({ params }) {
                     </Link>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Related Characters */}
             {relatedCharacters.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="bg-white rounded-xl p-5 border border-stone-200"
-              >
+              <div className="bg-white rounded-xl p-5 border border-stone-200">
                 <h3 className="font-bold text-stone-900 mb-3 text-base flex items-center gap-2">
                   <Users className="w-4 h-4 text-stone-600" />
                   관련 인물
@@ -348,46 +248,11 @@ export default function CharacterDetailPage({ params }) {
                     </Link>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
       </section>
-
-      {/* 이미지 모달 */}
-      <AnimatePresence>
-        {imageOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-6"
-            onClick={() => setImageOpen(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="relative"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <CharacterAvatar character={character} size={400} />
-              <button
-                onClick={() => setImageOpen(false)}
-                className="absolute -top-3 -right-3 w-9 h-9 bg-white rounded-full shadow-lg flex items-center justify-center text-stone-500 hover:text-stone-800 transition-colors"
-              >
-                <X size={18} />
-              </button>
-              <div className="text-center mt-4">
-                <p className="text-white text-xl font-bold">{character.name}</p>
-                <p className="text-white/70 text-base">{character.role}</p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
