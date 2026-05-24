@@ -8,10 +8,30 @@ const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
 });
 
+const SITE_URL = "https://xn--oy2b970a.com"; // 진리.com
+const SITE_DESC =
+  "성경의 이야기를 시각적으로 알기 쉽게 보여주는 사이트. 인물, 타임라인, 챕터별로 하나님의 이야기를 살펴보세요.";
+
 export const metadata = {
-  title: "진리 — 성경 이야기",
-  description:
-    "성경의 이야기를 시각적으로 알기 쉽게 보여주는 사이트. 인물, 타임라인, 챕터별로 하나님의 이야기를 살펴보세요.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "진리 — 성경 이야기",
+    template: "%s — 진리",
+  },
+  description: SITE_DESC,
+  openGraph: {
+    title: "진리 — 성경 이야기",
+    description: SITE_DESC,
+    url: SITE_URL,
+    siteName: "진리",
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "진리 — 성경 이야기",
+    description: SITE_DESC,
+  },
 };
 
 export default function RootLayout({ children }) {
