@@ -162,7 +162,7 @@ function BooksContent({ oldTestament, newTestament }) {
             const Icon = info.Icon || BookOpen;
             return (
               <motion.div
-                key={group.category + activeTab}
+                key={group.category + activeTab + gi}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: gi * 0.06, duration: 0.4 }}
