@@ -4,7 +4,8 @@ import { useState } from "react";
 
 export default function CharacterAvatar({ character, size = 120 }) {
   const [error, setError] = useState(false);
-  const src = `/characters/${character.id}.jpg`;
+  const r2 = process.env.NEXT_PUBLIC_R2_URL || "";
+  const src = r2 ? `${r2}/characters/${character.id}.jpg` : `/characters/${character.id}.jpg`;
 
   if (error) {
     return (

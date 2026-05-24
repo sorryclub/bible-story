@@ -27,7 +27,8 @@ function StyledDescription({ text, characterId }) {
     <div className="space-y-6">
       {paragraphs.map((para, pi) => {
         const parts = para.split(versePattern);
-        const imgSrc = `/stories/${characterId}_${pi}.jpg`;
+        const r2 = process.env.NEXT_PUBLIC_R2_URL || "";
+        const imgSrc = r2 ? `${r2}/stories/${characterId}_${pi}.jpg` : `/stories/${characterId}_${pi}.jpg`;
 
         return (
           <div key={pi}>
@@ -270,14 +271,21 @@ export default function CharacterDetailPage({ params }) {
                 핵심 성경 구절
               </h3>
               <div className="space-y-2">
-                {character.keyVerses.map((verse, i) => (
-                  <div
-                    key={i}
-                    className="px-3 py-2 bg-white rounded-lg text-base text-stone-700 border border-stone-100"
-                  >
-                    {verse}
-                  </div>
-                ))}
+                {character.keyVerses.map((verse, i) => {
+                  const ref = typeof verse === "object" ? verse.ref : verse;
+                  const summary = typeof verse === "object" ? verse.summary : null;
+                  return (
+                    <div
+                      key={i}
+                      className="px-3 py-2 bg-white rounded-lg border border-stone-100"
+                    >
+                      <p className="font-medium text-stone-800">{ref}</p>
+                      {summary && (
+                        <p className="text-stone-500 mt-0.5">{summary}</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
 
