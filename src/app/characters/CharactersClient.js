@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Users, Search } from "lucide-react";
+import { Users, Search, ArrowUpDown } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
 
 const PERIOD_COLORS = {
@@ -19,19 +18,35 @@ const PERIOD_COLORS = {
   "신약 시대": { bg: "bg-[#1A7A5A]", text: "text-white" },
 };
 
+const PERIOD_ORDER = [
+  "창조 시대", "홍수 시대", "족장 시대", "출애굽 시대", "정복 시대",
+  "사사 시대", "왕국 시대", "분열 왕국 시대", "포로 시대", "신약 시대",
+];
+
 export default function CharactersClient({ characters, periods }) {
   const [selectedPeriod, setSelectedPeriod] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortMode, setSortMode] = useState("bible"); // "bible" | "name"
 
-  const filteredCharacters = characters.filter((c) => {
-    const matchesPeriod =
-      selectedPeriod === "all" || c.period === selectedPeriod;
-    const matchesSearch =
-      c.name.includes(searchQuery) ||
-      c.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.role.includes(searchQuery);
-    return matchesPeriod && matchesSearch;
-  });
+  const filteredCharacters = useMemo(() => {
+    let result = characters.filter((c) => {
+      const matchesPeriod =
+        selectedPeriod === "all" || c.period === selectedPeriod;
+      const matchesSearch =
+        c.name.includes(searchQuery) ||
+        c.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.role.includes(searchQuery);
+      return matchesPeriod && matchesSearch;
+    });
+
+    if (sortMode === "bible") {
+      result = [...result].sort((a, b) => (a.bibleOrder || 999) - (b.bibleOrder || 999));
+    } else {
+      result = [...result].sort((a, b) => a.name.localeCompare(b.name, "ko"));
+    }
+
+    return result;
+  }, [characters, selectedPeriod, searchQuery, sortMode]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -56,7 +71,32 @@ export default function CharactersClient({ characters, periods }) {
           />
         </div>
 
-        {/* 시대 필터 */}
+        {/* 정렬 + 시대 필터 */}
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="flex items-center border border-stone-200 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setSortMode("bible")}
+              className={`flex items-center gap-1.5 px-3.5 py-2 text-base font-medium transition-colors ${
+                sortMode === "bible"
+                  ? "bg-stone-800 text-white"
+                  : "text-stone-400 hover:bg-stone-50"
+              }`}
+            >
+              성경 순서
+            </button>
+            <button
+              onClick={() => setSortMode("name")}
+              className={`flex items-center gap-1.5 px-3.5 py-2 text-base font-medium transition-colors ${
+                sortMode === "name"
+                  ? "bg-stone-800 text-white"
+                  : "text-stone-400 hover:bg-stone-50"
+              }`}
+            >
+              가나다순
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-wrap justify-center gap-2">
           <button
             onClick={() => setSelectedPeriod("all")}

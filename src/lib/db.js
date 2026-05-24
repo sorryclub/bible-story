@@ -17,7 +17,7 @@ export function getDB() {
 // ── Characters ──
 export async function getAllCharacters() {
   const db = getDB();
-  const rows = await db.execute("SELECT * FROM characters ORDER BY FIELD(period, '창조 시대','홍수 시대','족장 시대','출애굽 시대','정복 시대','사사 시대','왕국 시대','분열 왕국 시대','포로 시대','신약 시대'), name");
+  const rows = await db.execute("SELECT * FROM characters ORDER BY bible_order ASC, id");
   return rows.map(parseCharacter);
 }
 
@@ -48,6 +48,7 @@ function parseCharacter(row) {
     keyEvents: typeof row.key_events === "string" ? JSON.parse(row.key_events) : row.key_events,
     relatedCharacters: typeof row.related_characters === "string" ? JSON.parse(row.related_characters) : row.related_characters,
     books: typeof row.books === "string" ? JSON.parse(row.books) : row.books,
+    bibleOrder: row.bible_order || 999,
   };
 }
 
