@@ -1,4 +1,4 @@
-const { connect } = require("@tidbcloud/serverless");
+const db = require("./_db");
 
 const { characters } = require("../src/data/characters.js");
 const { timelineEvents } = require("../src/data/timeline.js");
@@ -8,12 +8,6 @@ const { miracles } = require("../src/data/miracles.js");
 const { prophecies } = require("../src/data/prophecies.js");
 const { locations, journeys } = require("../src/data/map.js");
 
-const db = connect({
-  host: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
-  username: "uTokWGempxttKzg.root",
-  password: "vs8gJYo2o1frzToi",
-  database: "bible_story",
-});
 
 async function migrate() {
   console.log("Starting migration...\n");

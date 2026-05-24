@@ -1,15 +1,7 @@
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const https = require("https");
 const { characters } = require("../src/data/characters.js");
-
-const s3 = new S3Client({
-  region: "auto",
-  endpoint: "https://ee95e72aa4bc50712a77c0c8a0caf9fb.r2.cloudflarestorage.com",
-  credentials: {
-    accessKeyId: "a9455d98a9fed3fb0db769e3b942de97",
-    secretAccessKey: "298c0ad28a126b406428ceee035918e786bacdc31b95563994b53f9961935f21",
-  },
-});
+const { s3, bucket } = require("./_r2");
 
 const STYLE = ", 3D animated biblical scene, Pixar Disney style, cinematic wide shot, warm golden lighting, ancient middle eastern setting, detailed environment, high quality, no text";
 
@@ -172,7 +164,7 @@ async function main() {
     try {
       const buf = await downloadImage(url);
       await s3.send(new PutObjectCommand({
-        Bucket: "bible-story-images",
+        Bucket: bucket,
         Key: key,
         Body: buf,
         ContentType: "image/jpeg",

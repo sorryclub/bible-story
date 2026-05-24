@@ -1,11 +1,5 @@
-const { connect } = require("@tidbcloud/serverless");
+const db = require("./_db");
 
-const db = connect({
-  host: "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
-  username: "uTokWGempxttKzg.root",
-  password: "vs8gJYo2o1frzToi",
-  database: "bible_story",
-});
 
 // 이미 완료된 16명 제외
 const DONE_IDS = new Set([
