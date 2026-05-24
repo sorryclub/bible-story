@@ -7,16 +7,19 @@ import {
   ChevronRight,
   Info,
 } from "lucide-react";
-import { getBook, getAllBooks, categories, getAllCharacters } from "@/lib/db";
+import { getBook, getAllBooks, categories, getAllCharacters, getBookChapters } from "@/lib/db";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import AnimatedSection from "./AnimatedSection";
+import { Suspense } from "react";
+import ChapterList from "./ChapterList";
 
 export default async function BookDetailPage({ params }) {
   const { id } = await params;
-  const [book, allBooks, allCharacters] = await Promise.all([
+  const [book, allBooks, allCharacters, chapters] = await Promise.all([
     getBook(id),
     getAllBooks(),
     getAllCharacters(),
+    getBookChapters(id),
   ]);
 
   if (!book) {
@@ -178,25 +181,30 @@ export default async function BookDetailPage({ params }) {
               )}
             </AnimatedSection>
 
-            {/* Chapter Grid */}
+            {/* Chapter Summaries */}
             <AnimatedSection delay={0.3} duration={0.5}>
               <h2 className="text-lg font-bold text-stone-800 mb-5 flex items-center gap-2">
                 <Star size={18} className="text-stone-400" />
-                챕터 ({book.chapters}장)
+                각 장 요약 ({book.chapters}장)
               </h2>
-              <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-1.5">
-                {Array.from({ length: book.chapters }, (_, i) => i + 1).map(
-                  (chapter) => (
-                    <div
-                      key={chapter}
-                      className="w-full aspect-square rounded flex items-center justify-center text-base font-medium bg-stone-100 text-stone-600 hover:bg-stone-200 transition-colors cursor-default"
-                      title={`${book.name} ${chapter}장`}
-                    >
-                      {chapter}
-                    </div>
-                  )
-                )}
-              </div>
+              {chapters && chapters.length > 0 ? (
+                <Suspense fallback={<div className="text-stone-400">로딩 중...</div>}>
+                  <ChapterList chapters={chapters} bookColor={book.color} characters={allCharacters} />
+                </Suspense>
+              ) : (
+                <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-1.5">
+                  {Array.from({ length: book.chapters }, (_, i) => i + 1).map(
+                    (chapter) => (
+                      <div
+                        key={chapter}
+                        className="w-full aspect-square rounded flex items-center justify-center text-base font-medium bg-stone-100 text-stone-600 cursor-default"
+                      >
+                        {chapter}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
             </AnimatedSection>
           </div>
 
@@ -234,32 +242,7 @@ export default async function BookDetailPage({ params }) {
               </div>
             </AnimatedSection>
 
-            {/* Related Characters */}
-            {relatedCharacters.length > 0 && (
-              <AnimatedSection delay={0.3} duration={0.5} className="bg-white rounded-xl p-5 border border-stone-100">
-                <h3 className="text-base font-semibold text-stone-700 mb-4 flex items-center gap-1.5">
-                  <Users size={14} className="text-stone-400" />
-                  등장 인물
-                </h3>
-                <div className="space-y-2">
-                  {relatedCharacters.map((char) => (
-                    <Link
-                      key={char.id}
-                      href={`/characters/${char.id}`}
-                      className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-stone-50 transition-colors"
-                    >
-                      <CharacterAvatar character={char} size={36} />
-                      <div>
-                        <p className="text-base font-medium text-stone-800">
-                          {char.name}
-                        </p>
-                        <p className="text-base text-stone-400">{char.role}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </AnimatedSection>
-            )}
+            {/* 등장 인물은 각 장 요약에 표시되므로 사이드바에서 제거 */}
 
             {/* Prev/Next Navigation */}
             <AnimatedSection delay={0.4} duration={0.5} className="bg-white rounded-xl p-5 border border-stone-100">

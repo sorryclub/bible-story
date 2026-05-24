@@ -140,9 +140,9 @@ export default function CharactersClient({ characters, periods }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
             {filteredCharacters.map((char, i) => (
               <Link key={char.id} href={`/characters/${char.id}`} className="block group">
-                <div className="bg-white rounded-xl p-5 text-center border border-stone-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
+                <div className="bg-white rounded-xl p-4 text-center border border-stone-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
                   <div className="flex justify-center mb-3">
-                    <CharacterAvatar character={char} size={120} />
+                    <CharacterAvatar character={char} size={140} />
                   </div>
                   <h3 className="font-bold text-stone-900 text-lg">{char.name}</h3>
                   <p className="text-base text-stone-500 mt-0.5">{char.nameEn}</p>

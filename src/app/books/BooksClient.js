@@ -34,7 +34,7 @@ function BookCard({ book, index }) {
               )}
               <h3 className="text-lg font-semibold text-stone-900">{book.name}</h3>
             </div>
-            <p className="text-base text-stone-400">{book.nameEn}</p>
+            <p className="text-base text-stone-400 truncate">{book.nameEn}</p>
           </div>
           <span className="text-base px-2.5 py-0.5 rounded-full font-medium bg-stone-100 text-stone-500 shrink-0">
             {book.chapters}장
@@ -49,17 +49,17 @@ function BookCard({ book, index }) {
           <span className="text-base text-stone-500">{book.keyTheme}</span>
         </div>
 
-        <p className="text-base text-stone-600 leading-relaxed line-clamp-2">{book.summary}</p>
+        <p className="text-base text-stone-600 leading-relaxed line-clamp-3 min-h-[4.8em]">{book.summary}</p>
 
-        <div className="pt-3 mt-auto border-t border-stone-50 flex items-center justify-between">
-          <div className="flex flex-wrap gap-1.5 min-h-[28px]">
+        <div className="pt-3 mt-auto border-t border-stone-50 flex items-center justify-between h-[40px] overflow-hidden">
+          <div className="flex gap-1.5 items-center overflow-hidden">
             {book.highlights && book.highlights.slice(0, 3).map((h, j) => (
-              <span key={j} className="text-base px-2 py-0.5 bg-stone-50 rounded text-stone-500">
+              <span key={j} className="text-base px-2 py-0.5 bg-stone-50 rounded text-stone-500 whitespace-nowrap shrink-0">
                 {h.title}
               </span>
             ))}
             {book.highlights && book.highlights.length > 3 && (
-              <span className="text-base text-stone-300">+{book.highlights.length - 3}</span>
+              <span className="text-base text-stone-300 shrink-0">+{book.highlights.length - 3}</span>
             )}
           </div>
           <ChevronRight size={16} className="text-stone-300 group-hover:text-stone-500 transition-colors shrink-0 ml-2" />

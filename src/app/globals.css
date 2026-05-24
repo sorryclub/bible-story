@@ -31,6 +31,13 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 2px; }
 
+/* Chapter highlight on anchor link */
+.chapter-anchor:target {
+  background-color: #E7E5E4;
+  box-shadow: 0 0 0 2px #A8A29E;
+  border-radius: 0.75rem;
+}
+
 /* Timeline */
 .timeline-line {
   position: absolute;

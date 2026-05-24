@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import Link from "next/link";
 import CharacterAvatar from "@/components/CharacterAvatar";
+import { parseVerseRef } from "@/lib/verseLink";
 
 // 장면 이미지 컴포넌트 (이미지 없으면 숨김)
 function StoryImage({ src, index }) {
@@ -45,12 +47,25 @@ export function StyledDescription({ text, characterId }) {
               {parts.map((part, i) => {
                 if (versePattern.test(part)) {
                   versePattern.lastIndex = 0;
+                  const verseText = part.slice(1, -1);
+                  const link = parseVerseRef(verseText, characterId);
+                  if (link) {
+                    return (
+                      <Link
+                        key={i}
+                        href={link.href}
+                        className="inline-flex items-center ml-1 px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 text-[13px] font-medium whitespace-nowrap align-middle hover:bg-stone-200 hover:text-stone-800 transition-colors cursor-pointer"
+                      >
+                        {verseText}
+                      </Link>
+                    );
+                  }
                   return (
                     <span
                       key={i}
                       className="inline-flex items-center ml-1 px-2 py-0.5 rounded-md bg-stone-100 text-stone-500 text-[13px] font-medium whitespace-nowrap align-middle"
                     >
-                      {part.slice(1, -1)}
+                      {verseText}
                     </span>
                   );
                 }

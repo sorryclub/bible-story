@@ -8,17 +8,26 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { getCharacter, getAllCharacters, getBook, getAllTimelineEvents } from "@/lib/db";
+import { parseVerseRef } from "@/lib/verseLink";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import { StyledDescription, CharacterHeroAvatar } from "./CharacterDetailClient";
 
-// 주요 사건의 (창세기 2:7) 참조를 분리하여 표시
-function StyledEvent({ text }) {
+// 주요 사건의 (창세기 2:7) 참조를 분리하여 링크로 표시
+function StyledEvent({ text, characterId }) {
   const match = text.match(/^(.*?)\s*(\([^)]*\d+[:\d\-,\s장]*[^)]*\))$/);
   if (match) {
+    const verseText = match[2].slice(1, -1);
+    const link = parseVerseRef(verseText, characterId);
     return (
       <div>
         <p className="text-stone-700 text-base">{match[1]}</p>
-        <p className="text-stone-500 text-[14px] mt-0.5">{match[2].slice(1, -1)}</p>
+        {link ? (
+          <Link href={link.href} className="text-stone-500 text-[14px] mt-0.5 inline-block hover:text-stone-800 underline decoration-stone-300 underline-offset-2 transition-colors">
+            {verseText}
+          </Link>
+        ) : (
+          <p className="text-stone-500 text-[14px] mt-0.5">{verseText}</p>
+        )}
       </div>
     );
   }
@@ -134,7 +143,7 @@ export default async function CharacterDetailPage({ params }) {
                     <div className="w-8 h-8 rounded-full flex items-center justify-center bg-stone-800 text-white text-base font-bold shrink-0">
                       {i + 1}
                     </div>
-                    <StyledEvent text={event} />
+                    <StyledEvent text={event} characterId={character.id} />
                   </div>
                 ))}
               </div>
@@ -184,12 +193,19 @@ export default async function CharacterDetailPage({ params }) {
                 {character.keyVerses.map((verse, i) => {
                   const ref = typeof verse === "object" ? verse.ref : verse;
                   const summary = typeof verse === "object" ? verse.summary : null;
+                  const link = parseVerseRef(ref, character.id);
                   return (
                     <div
                       key={i}
-                      className="px-3 py-2 bg-white rounded-lg border border-stone-100"
+                      className="px-3 py-2 bg-white rounded-lg border border-stone-100 hover:border-stone-300 transition-colors"
                     >
-                      <p className="font-medium text-stone-800">{ref}</p>
+                      {link ? (
+                        <Link href={link.href} className="font-medium text-stone-800 hover:text-stone-900 underline decoration-stone-300 underline-offset-2">
+                          {ref}
+                        </Link>
+                      ) : (
+                        <p className="font-medium text-stone-800">{ref}</p>
+                      )}
                       {summary && (
                         <p className="text-stone-500 mt-0.5">{summary}</p>
                       )}

@@ -75,7 +75,7 @@ function parseTimelineEvent(row) {
 // ── Books ──
 export async function getAllBooks() {
   const db = getDB();
-  const rows = await db.execute("SELECT * FROM books ORDER BY FIELD(testament, 'old', 'new'), id");
+  const rows = await db.execute("SELECT * FROM books ORDER BY FIELD(testament, 'old', 'new'), bible_order");
   return rows.map(parseBook);
 }
 
@@ -85,9 +85,31 @@ export async function getBook(id) {
   return rows.length > 0 ? parseBook(rows[0]) : null;
 }
 
+export async function getBookChapters(bookId) {
+  const db = getDB();
+  const [chapters, charLinks] = await Promise.all([
+    db.execute("SELECT chapter, summary FROM book_chapters WHERE book_id = ? ORDER BY chapter", [bookId]),
+    db.execute("SELECT chapter, character_id FROM chapter_characters WHERE book_id = ? ORDER BY chapter", [bookId]),
+  ]);
+
+  // 장별 인물 ID 그룹핑
+  const charMap = {};
+  charLinks.forEach(r => {
+    const ch = r.chapter;
+    if (!charMap[ch]) charMap[ch] = [];
+    charMap[ch].push(r.character_id);
+  });
+
+  return chapters.map(r => ({
+    chapter: r.chapter,
+    summary: r.summary,
+    characterIds: charMap[r.chapter] || [],
+  }));
+}
+
 export async function getBooksByTestament(testament) {
   const db = getDB();
-  const rows = await db.execute("SELECT * FROM books WHERE testament = ? ORDER BY id", [testament]);
+  const rows = await db.execute("SELECT * FROM books WHERE testament = ? ORDER BY bible_order", [testament]);
   return rows.map(parseBook);
 }
 
