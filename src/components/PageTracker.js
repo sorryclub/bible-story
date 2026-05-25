@@ -9,6 +9,8 @@ export default function PageTracker() {
 
   useEffect(() => {
     if (tracked.current === pathname) return;
+    if (pathname.startsWith("/admin") || pathname.startsWith("/api")) return;
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") return;
     tracked.current = pathname;
 
     fetch("/api/track", {
