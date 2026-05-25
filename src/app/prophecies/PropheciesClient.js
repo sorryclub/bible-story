@@ -1,14 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Filter, BookOpen } from "lucide-react";
+import { ArrowDown, Filter, BookOpen, Star, Footprints, Cross, Sunrise } from "lucide-react";
+import { parseVerseRef } from "@/lib/verseLink";
 
 const categoryColors = {
-  "탄생": "bg-amber-50 text-amber-700",
-  "사역": "bg-emerald-50 text-emerald-700",
-  "수난": "bg-red-50 text-red-700",
-  "부활/승천": "bg-sky-50 text-sky-700",
+  "탄생": "#B07830",
+  "사역": "#2E7D32",
+  "수난": "#C62828",
+  "부활/승천": "#1565C0",
+};
+
+const categoryIcons = {
+  "탄생": Star,
+  "사역": Footprints,
+  "수난": Cross,
+  "부활/승천": Sunrise,
 };
 
 export default function PropheciesClient({ prophecies, prophecyCategories }) {
@@ -49,19 +58,33 @@ export default function PropheciesClient({ prophecies, prophecyCategories }) {
             >
               전체
             </button>
-            {prophecyCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-lg text-base font-medium transition-colors ${
-                  selectedCategory === cat
-                    ? "bg-stone-800 text-white"
-                    : "border border-stone-200 text-stone-500 hover:bg-stone-50"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {prophecyCategories.map((cat) => {
+              const cc = categoryColors[cat] || "#57534E";
+              const Icon = categoryIcons[cat];
+              const active = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className="px-4 py-1.5 rounded-lg text-base font-medium transition-colors flex items-center gap-2 border hover:bg-stone-50"
+                  style={
+                    active
+                      ? { backgroundColor: cc, color: "#fff", borderColor: cc }
+                      : { borderColor: "#e7e5e4", color: "#78716c" }
+                  }
+                >
+                  {Icon && (
+                    <Icon
+                      size={17}
+                      strokeWidth={2}
+                      color={active ? "#ffffff" : cc}
+                      className="shrink-0"
+                    />
+                  )}
+                  {cat}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -86,54 +109,74 @@ export default function PropheciesClient({ prophecies, prophecyCategories }) {
                   <h3 className="text-lg font-bold text-stone-900">
                     {p.title}
                   </h3>
-                  <span
-                    className={`text-base font-medium px-2.5 py-1 rounded-md shrink-0 ${
-                      categoryColors[p.category] || "bg-stone-50 text-stone-500"
-                    }`}
-                  >
-                    {p.category}
-                  </span>
+                  {(() => {
+                    const Icon = categoryIcons[p.category];
+                    const c = categoryColors[p.category] || "#57534E";
+                    return (
+                      <span
+                        className="inline-flex items-center gap-1.5 text-base font-medium px-2.5 py-1 rounded-md shrink-0"
+                        style={{ backgroundColor: `${c}1a`, color: c }}
+                      >
+                        {Icon && <Icon size={15} strokeWidth={2} />}
+                        {p.category}
+                      </span>
+                    );
+                  })()}
                 </div>
 
-                {/* 예언 / 성취 두 열 */}
-                <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-start">
+                {/* 예언 → 성취 (세로 흐름) */}
+                <div className="flex flex-col gap-5">
                   {/* 구약 예언 */}
-                  <div className="border-l-[3px] border-amber-300 pl-4 py-1">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <BookOpen size={13} className="text-amber-500" />
+                  <div className="py-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BookOpen size={18} className="text-amber-500" />
                       <span className="text-base font-semibold text-amber-600 uppercase tracking-wide">
                         예언
                       </span>
                     </div>
                     <p className="text-base font-medium text-stone-700 mb-1">
-                      {p.otVerse}
+                      {(() => {
+                        const link = parseVerseRef(p.otVerse);
+                        return link ? (
+                          <Link href={link.href} className="hover:text-amber-700 hover:underline transition-colors">
+                            {p.otVerse}
+                          </Link>
+                        ) : (
+                          p.otVerse
+                        );
+                      })()}
                     </p>
                     <p className="text-base text-stone-500 leading-relaxed">
                       {p.otText}
                     </p>
                   </div>
 
-                  {/* 화살표 */}
-                  <div className="hidden md:flex items-center justify-center pt-6">
-                    <ArrowRight size={20} className="text-stone-300" />
-                  </div>
-                  <div className="flex md:hidden items-center justify-center">
-                    <ArrowRight
-                      size={16}
-                      className="text-stone-300 rotate-90"
-                    />
+                  {/* 예언에서 성취로 (아래 방향) */}
+                  <div className="flex justify-center">
+                    <span className="w-9 h-9 rounded-full bg-stone-100 ring-1 ring-stone-200 flex items-center justify-center text-stone-500 shadow-sm">
+                      <ArrowDown size={18} strokeWidth={2.4} />
+                    </span>
                   </div>
 
                   {/* 신약 성취 */}
-                  <div className="border-l-[3px] border-blue-300 pl-4 py-1">
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <BookOpen size={13} className="text-blue-500" />
+                  <div className="py-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BookOpen size={18} className="text-blue-500" />
                       <span className="text-base font-semibold text-blue-600 uppercase tracking-wide">
                         성취
                       </span>
                     </div>
                     <p className="text-base font-medium text-stone-700 mb-1">
-                      {p.ntVerse}
+                      {(() => {
+                        const link = parseVerseRef(p.ntVerse);
+                        return link ? (
+                          <Link href={link.href} className="hover:text-blue-700 hover:underline transition-colors">
+                            {p.ntVerse}
+                          </Link>
+                        ) : (
+                          p.ntVerse
+                        );
+                      })()}
                     </p>
                     <p className="text-base text-stone-500 leading-relaxed">
                       {p.ntText}

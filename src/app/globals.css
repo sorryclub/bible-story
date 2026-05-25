@@ -26,6 +26,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* 모바일 최소 폰트 가독성: 작은 텍스트만 상향 (본문 text-base 16px는 유지) */
+@media (max-width: 640px) {
+  .text-xs { font-size: 0.8125rem; } /* 12 → 13px */
+  .text-sm { font-size: 0.9375rem; } /* 14 → 15px */
+}
+
 /* Minimal scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { BookOpen, Users, Eye, ChevronRight } from "lucide-react";
+import { Users, Eye, ChevronRight } from "lucide-react";
 
 const gospelIds = ["matthew", "mark", "luke", "john"];
 
@@ -78,17 +78,7 @@ const tableRows = [
   { label: "장수", key: "chapters" },
 ];
 
-export default function GospelsClient({ gospelBooks, parables, miracles }) {
-  const parableCounts = {};
-  const miracleCounts = {};
-  gospelIds.forEach((id) => {
-    parableCounts[id] = parables.filter((p) => p.gospels.includes(id)).length;
-    miracleCounts[id] = miracles.filter((m) => m.gospels.includes(id)).length;
-  });
-
-  const maxParables = Math.max(...Object.values(parableCounts));
-  const maxMiracles = Math.max(...Object.values(miracleCounts));
-
+export default function GospelsClient({ gospelBooks }) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -231,97 +221,6 @@ export default function GospelsClient({ gospelBooks, parables, miracles }) {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Content Comparison */}
-      <section className="max-w-5xl mx-auto px-6 py-16">
-        <div className="flex items-center gap-2 justify-center mb-2">
-          <BookOpen size={18} className="text-stone-400" />
-          <h2 className="text-2xl font-bold text-stone-900">콘텐츠 비교</h2>
-        </div>
-        <p className="text-base text-stone-500 text-center mb-10">
-          각 복음서에 기록된 비유와 기적의 수
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Parables */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-            className="border border-stone-200 rounded-xl p-6"
-          >
-            <h3 className="text-lg font-bold text-stone-900 mb-1">비유</h3>
-            <p className="text-base text-stone-400 mb-6">Parables</p>
-            <div className="space-y-4">
-              {gospelIds.map((id) => {
-                const count = parableCounts[id];
-                const pct = maxParables > 0 ? (count / maxParables) * 100 : 0;
-                const book = gospelBooks.find((b) => b.id === id);
-                return (
-                  <div key={id}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-base font-medium text-stone-700">
-                        {gospelNameMap[id]}복음
-                      </span>
-                      <span className="text-base font-bold text-stone-900">
-                        {count}개
-                      </span>
-                    </div>
-                    <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${pct}%` }}
-                        transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: book.color }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          {/* Miracles */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.4 }}
-            className="border border-stone-200 rounded-xl p-6"
-          >
-            <h3 className="text-lg font-bold text-stone-900 mb-1">기적</h3>
-            <p className="text-base text-stone-400 mb-6">Miracles</p>
-            <div className="space-y-4">
-              {gospelIds.map((id) => {
-                const count = miracleCounts[id];
-                const pct = maxMiracles > 0 ? (count / maxMiracles) * 100 : 0;
-                const book = gospelBooks.find((b) => b.id === id);
-                return (
-                  <div key={id}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-base font-medium text-stone-700">
-                        {gospelNameMap[id]}복음
-                      </span>
-                      <span className="text-base font-bold text-stone-900">
-                        {count}개
-                      </span>
-                    </div>
-                    <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${pct}%` }}
-                        transition={{ delay: 0.35, duration: 0.6, ease: "easeOut" }}
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: book.color }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
         </div>
       </section>
 

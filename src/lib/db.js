@@ -55,7 +55,7 @@ function parseCharacter(row) {
 // ── Timeline ──
 export async function getAllTimelineEvents() {
   const db = getDB();
-  const rows = await db.execute("SELECT * FROM timeline_events ORDER BY FIELD(era, '창조 시대','홍수 시대','족장 시대','출애굽 시대','정복 시대','사사 시대','왕국 시대','분열 왕국 시대','포로 시대','신약 시대'), year");
+  const rows = await db.execute("SELECT * FROM timeline_events ORDER BY sort_order ASC, id ASC");
   return rows.map(parseTimelineEvent);
 }
 
@@ -64,7 +64,6 @@ function parseTimelineEvent(row) {
     id: row.id,
     era: row.era,
     title: row.title,
-    year: row.year,
     description: row.description,
     verse: row.verse,
     characters: typeof row.characters === "string" ? JSON.parse(row.characters) : row.characters,
@@ -193,7 +192,7 @@ export async function getAllLocations() {
 
 export async function getAllJourneys() {
   const db = getDB();
-  const rows = await db.execute("SELECT * FROM journeys");
+  const rows = await db.execute("SELECT * FROM journeys ORDER BY sort_order ASC, id ASC");
   return rows.map(parseJourney);
 }
 
@@ -207,6 +206,8 @@ function parseLocation(row) {
     region: row.region,
     importance: row.importance,
     labelPos: row.label_pos,
+    description: row.description,
+    characters: typeof row.characters === "string" ? JSON.parse(row.characters) : row.characters,
     events: typeof row.events === "string" ? JSON.parse(row.events) : row.events,
   };
 }
@@ -217,6 +218,8 @@ function parseJourney(row) {
     name: row.name,
     color: row.color,
     era: row.era,
+    period: row.period,
+    sortOrder: row.sort_order,
     description: row.description,
     path: typeof row.path === "string" ? JSON.parse(row.path) : row.path,
   };

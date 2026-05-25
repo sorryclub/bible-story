@@ -1,4 +1,4 @@
-import { Noto_Sans_KR } from "next/font/google";
+import { Noto_Sans_KR, Nanum_Myeongjo } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 
@@ -8,6 +8,13 @@ const notoSansKR = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
 });
 
+// 로고·제목용 명조(세리프) 폰트
+const nanumMyeongjo = Nanum_Myeongjo({
+  subsets: ["latin"],
+  weight: ["400", "700", "800"],
+  variable: "--font-nanum-myeongjo",
+});
+
 const SITE_URL = "https://xn--oy2b970a.com"; // 진리.com
 const SITE_DESC =
   "성경의 이야기를 시각적으로 알기 쉽게 보여주는 사이트. 인물, 타임라인, 챕터별로 하나님의 이야기를 살펴보세요.";
@@ -15,12 +22,12 @@ const SITE_DESC =
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "진리 — 성경 이야기",
+    default: "진리",
     template: "%s — 진리",
   },
   description: SITE_DESC,
   openGraph: {
-    title: "진리 — 성경 이야기",
+    title: "진리",
     description: SITE_DESC,
     url: SITE_URL,
     siteName: "진리",
@@ -29,17 +36,28 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "진리 — 성경 이야기",
+    title: "진리",
     description: SITE_DESC,
   },
   verification: {
     google: "ydinXmdTlr0q-ZeAMl4qK8bQ6jdSzMpy9pV-0vf9NcI",
   },
+  // iOS 홈화면 웹앱
+  appleWebApp: {
+    capable: true,
+    title: "진리",
+    statusBarStyle: "default",
+  },
+};
+
+// 모바일 브라우저 chrome(주소창) 색상
+export const viewport = {
+  themeColor: "#1E3A8A",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ko" className={`${notoSansKR.variable} h-full`}>
+    <html lang="ko" className={`${notoSansKR.variable} ${nanumMyeongjo.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-[#FAFAF7] antialiased">
         <Navigation />
         <main className="flex-1">{children}</main>
@@ -48,7 +66,12 @@ export default function RootLayout({ children }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
               {/* 서비스 소개 */}
               <div>
-                <h3 className="text-lg font-bold text-stone-900 mb-3">진리</h3>
+                <h3
+                  className="text-2xl font-extrabold tracking-tight mb-3"
+                  style={{ fontFamily: "var(--font-nanum-myeongjo), serif", color: "#1E3A8A" }}
+                >
+                  진리
+                </h3>
                 <p className="text-base text-stone-500 leading-relaxed">
                   성경의 이야기를 시각적으로 쉽게 이해할 수 있도록 만든 서비스입니다. 모든 콘텐츠는 성경 본문에 기반합니다.
                 </p>

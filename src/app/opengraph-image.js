@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 // 공유 미리보기(카카오톡/페이스북/슬랙 등) 이미지
-export const alt = "진리 — 성경 이야기";
+export const alt = "진리";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,10 +23,7 @@ async function loadGoogleFont(family, text) {
 }
 
 export default async function Image() {
-  const [bold, regular] = await Promise.all([
-    loadGoogleFont("Noto+Sans+KR:wght@700", "진리"),
-    loadGoogleFont("Noto+Sans+KR:wght@400", "성경 이야기"),
-  ]);
+  const font = await loadGoogleFont("Nanum+Myeongjo:wght@800", "진리");
 
   return new ImageResponse(
     (
@@ -36,73 +33,35 @@ export default async function Image() {
           height: "100%",
           background: "#ffffff",
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          gap: 36,
         }}
       >
-        {/* 로고 마크: 어두운 둥근 사각형 + 펼친 책 아이콘 */}
+        <svg width="170" height="230" viewBox="3 1.5 18 21" fill="none">
+          <path
+            d="M9.5 2 L14.5 2 L13.4 8.1 L20.5 7 L20.5 12 L13.4 10.9 L14.5 22 L9.5 22 L10.6 10.9 L3.5 12 L3.5 7 L10.6 8.1 Z"
+            fill="#1E3A8A"
+          />
+        </svg>
         <div
           style={{
             display: "flex",
-            width: 240,
-            height: 240,
-            borderRadius: 56,
-            background: "#1c1917",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 24px 60px rgba(28,25,23,0.18)",
-          }}
-        >
-          <svg
-            width="132"
-            height="132"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#ffffff"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-          </svg>
-        </div>
-
-        {/* 워드마크 */}
-        <div
-          style={{
-            display: "flex",
-            marginTop: 56,
-            fontSize: 132,
-            fontWeight: 700,
-            color: "#1c1917",
-            fontFamily: "Noto Sans KR",
+            fontSize: 270,
+            fontWeight: 800,
+            color: "#1E3A8A",
+            fontFamily: "Nanum Myeongjo",
+            letterSpacing: -2,
           }}
         >
           진리
-        </div>
-
-        {/* 부제 */}
-        <div
-          style={{
-            display: "flex",
-            marginTop: 4,
-            fontSize: 40,
-            fontWeight: 400,
-            color: "#a8a29e",
-            fontFamily: "Noto Sans KR",
-          }}
-        >
-          성경 이야기
         </div>
       </div>
     ),
     {
       ...size,
       fonts: [
-        { name: "Noto Sans KR", data: bold, style: "normal", weight: 700 },
-        { name: "Noto Sans KR", data: regular, style: "normal", weight: 400 },
+        { name: "Nanum Myeongjo", data: font, style: "normal", weight: 800 },
       ],
     }
   );

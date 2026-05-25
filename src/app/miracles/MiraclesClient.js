@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Sparkles, Filter, BookOpen } from "lucide-react";
+import { Filter, BookOpen, HeartPulse, Waves, Ghost, Sunrise } from "lucide-react";
+import { parseVerseRef } from "@/lib/verseLink";
 
 const gospelNames = {
   matthew: "마태",
@@ -16,6 +18,14 @@ const categoryColors = {
   자연: "#1565C0",
   귀신: "#6A1B9A",
   부활: "#C62828",
+};
+
+// 유형별 아이콘
+const categoryIcons = {
+  치유: HeartPulse,
+  자연: Waves,
+  귀신: Ghost,
+  부활: Sunrise,
 };
 
 export default function MiraclesClient({ miracles, miracleCategories }) {
@@ -60,19 +70,33 @@ export default function MiraclesClient({ miracles, miracleCategories }) {
               >
                 전체
               </button>
-              {miracleCategories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-lg text-base font-medium transition-colors ${
-                    selectedCategory === cat
-                      ? "bg-stone-800 text-white"
-                      : "border border-stone-200 text-stone-500 hover:bg-stone-50"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+              {miracleCategories.map((cat) => {
+                const cc = categoryColors[cat] || "#57534E";
+                const Icon = categoryIcons[cat];
+                const active = selectedCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className="px-4 py-1.5 rounded-lg text-base font-medium transition-colors flex items-center gap-2 border hover:bg-stone-50"
+                    style={
+                      active
+                        ? { backgroundColor: cc, color: "#fff", borderColor: cc }
+                        : { borderColor: "#e7e5e4", color: "#78716c" }
+                    }
+                  >
+                    {Icon && (
+                      <Icon
+                        size={17}
+                        strokeWidth={2}
+                        color={active ? "#ffffff" : cc}
+                        className="shrink-0"
+                      />
+                    )}
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -131,31 +155,49 @@ export default function MiraclesClient({ miracles, miracleCategories }) {
                   <h3 className="text-lg font-bold text-stone-900">
                     {m.title}
                   </h3>
-                  <span
-                    className="text-base font-medium px-2.5 py-1 rounded-md shrink-0"
-                    style={{
-                      backgroundColor: `${categoryColors[m.category]}12`,
-                      color: categoryColors[m.category],
-                    }}
-                  >
-                    {m.category}
-                  </span>
+                  {(() => {
+                    const Icon = categoryIcons[m.category];
+                    const c = categoryColors[m.category] || "#57534E";
+                    return (
+                      <span
+                        className="inline-flex items-center gap-1.5 text-base font-medium px-2.5 py-1 rounded-md shrink-0"
+                        style={{ backgroundColor: `${c}1a`, color: c }}
+                      >
+                        {Icon && <Icon size={15} strokeWidth={2} />}
+                        {m.category}
+                      </span>
+                    );
+                  })()}
                 </div>
                 <p className="text-base text-stone-600 leading-relaxed mb-4">
                   {m.summary}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-base text-stone-400">{m.verse}</span>
-                  <div className="flex gap-1.5">
-                    {m.gospels.map((g) => (
-                      <span
-                        key={g}
-                        className="text-base font-medium text-stone-500 bg-stone-100 px-2 py-0.5 rounded"
+                  {(() => {
+                    const link = parseVerseRef(m.verse);
+                    return link ? (
+                      <Link
+                        href={link.href}
+                        className="text-base text-stone-400 hover:text-stone-700 hover:underline transition-colors"
                       >
-                        {gospelNames[g]}
-                      </span>
-                    ))}
-                  </div>
+                        {m.verse}
+                      </Link>
+                    ) : (
+                      <span className="text-base text-stone-400">{m.verse}</span>
+                    );
+                  })()}
+                  {m.gospels.length > 1 && (
+                    <div className="flex gap-1.5">
+                      {m.gospels.map((g) => (
+                        <span
+                          key={g}
+                          className="text-base font-medium text-stone-500 bg-stone-100 px-2 py-0.5 rounded"
+                        >
+                          {gospelNames[g]}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}

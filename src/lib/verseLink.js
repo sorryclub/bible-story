@@ -70,6 +70,61 @@ const BOOK_MAP = {
   "계": "revelation", "요한계시록": "revelation",
 };
 
+// 각 책의 '정식 한글 이름'(가장 긴 key)만 추출. 약어("사","막")는 단어 안에서
+// 오매칭하므로 제외 (예: "사복음서"의 "사"가 이사야로 잘못 잡히는 것 방지).
+const FULL_BOOK_NAMES = (() => {
+  const byId = {};
+  for (const [name, id] of Object.entries(BOOK_MAP)) {
+    if (!byId[id] || name.length > byId[id].length) byId[id] = name;
+  }
+  return Object.values(byId).sort((a, b) => b.length - a.length);
+})();
+const FULL_NAMES_RE = FULL_BOOK_NAMES
+  .map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+  .join("|");
+
+// 괄호 안 텍스트에서 책(+장) 참조를 링크 토큰으로 분해해 out 에 push.
+function tokenizeRefs(out, inner) {
+  const re = new RegExp(
+    `(${FULL_NAMES_RE})(\\s*\\d+(?::\\d+)?(?:[-~]\\d+(?::\\d+)?)?장?)?`,
+    "g"
+  );
+  let last = 0;
+  let m;
+  while ((m = re.exec(inner)) !== null) {
+    if (m.index > last) out.push({ text: inner.slice(last, m.index) });
+    const bookId = BOOK_MAP[m[1]];
+    const chapMatch = m[2] && m[2].match(/\d+/);
+    const chapter = chapMatch ? parseInt(chapMatch[0], 10) : null;
+    out.push({
+      text: m[0],
+      href: chapter ? `/books/${bookId}?ch=${chapter}` : `/books/${bookId}`,
+    });
+    last = m.index + m[0].length;
+  }
+  if (last < inner.length) out.push({ text: inner.slice(last) });
+}
+
+// 문장 속 성구 참조를 토큰 배열로 분해. 링크는 '괄호 안' 참조에만 적용
+// (본문의 인물 이름이 책 이름과 겹쳐 오링크되는 것을 방지).
+// 반환: [{ text }, { text, href }, ...] — href 있으면 링크, 없으면 일반 텍스트.
+export function tokenizeVerses(text) {
+  if (!text) return [{ text: "" }];
+  const out = [];
+  const parenRe = /\(([^)]*)\)/g;
+  let last = 0;
+  let pm;
+  while ((pm = parenRe.exec(text)) !== null) {
+    if (pm.index > last) out.push({ text: text.slice(last, pm.index) });
+    out.push({ text: "(" });
+    tokenizeRefs(out, pm[1]);
+    out.push({ text: ")" });
+    last = pm.index + pm[0].length;
+  }
+  if (last < text.length) out.push({ text: text.slice(last) });
+  return out;
+}
+
 export function parseVerseRef(text, fromCharacterId) {
   // "창 22:1-14" or "창세기 22:1-14" or "출 2장" or "삼상 17:45-50"
   const match = text.match(/^([가-힣]+)\s*(\d+)/);
@@ -81,11 +136,14 @@ export function parseVerseRef(text, fromCharacterId) {
 
   if (!bookId) return null;
 
-  const params = fromCharacterId ? `?from=${fromCharacterId}` : "";
+  // 해시(#ch) 대신 쿼리(?ch=)를 사용 — 라우터 캐시에서도 반응형으로 해당 장으로 이동
+  const query = new URLSearchParams();
+  query.set("ch", String(chapter));
+  if (fromCharacterId) query.set("from", fromCharacterId);
 
   return {
     bookId,
     chapter,
-    href: `/books/${bookId}${params}#ch${chapter}`,
+    href: `/books/${bookId}?${query.toString()}`,
   };
 }

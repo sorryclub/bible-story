@@ -34,6 +34,20 @@ export default function ChapterList({ chapters, bookColor, characters }) {
   const [activeChapter, setActiveChapter] = useState(null);
   const searchParams = useSearchParams();
   const fromCharId = searchParams.get("from");
+  const chParam = searchParams.get("ch");
+
+  // ?ch=N 쿼리로 들어온 장으로 이동 (라우터 캐시에도 반응형으로 동작)
+  useEffect(() => {
+    if (!chParam) return;
+    const num = parseInt(chParam, 10);
+    if (isNaN(num)) return;
+    setActiveChapter(num);
+    const t = setTimeout(() => {
+      const el = document.getElementById(`ch${num}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+    return () => clearTimeout(t);
+  }, [chParam]);
 
   // from 인물의 이름
   const fromCharName = useMemo(() => {

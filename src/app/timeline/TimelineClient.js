@@ -5,18 +5,19 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Filter, BookOpen, ChevronRight } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
+import { parseVerseRef } from "@/lib/verseLink";
 
 const eras = [
-  { id: "creation", name: "창조 시대", color: "#4CAF50", period: "태초" },
-  { id: "flood", name: "홍수 시대", color: "#2196F3", period: "약 BC 2400" },
-  { id: "patriarchs", name: "족장 시대", color: "#FF9800", period: "약 BC 2091-1876" },
-  { id: "exodus", name: "출애굽 시대", color: "#DC143C", period: "약 BC 1446" },
-  { id: "conquest", name: "정복 시대", color: "#228B22", period: "약 BC 1406" },
-  { id: "judges", name: "사사 시대", color: "#607D8B", period: "약 BC 1380-1050" },
-  { id: "kingdom", name: "왕국 시대", color: "#4169E1", period: "약 BC 1050-930" },
-  { id: "divided", name: "분열 왕국 시대", color: "#9E9E9E", period: "약 BC 930-586" },
-  { id: "exile", name: "포로 시대", color: "#424242", period: "약 BC 586-400" },
-  { id: "newTestament", name: "신약 시대", color: "#B71C1C", period: "약 BC 4 - AD 100" },
+  { id: "creation", name: "창조 시대", color: "#4CAF50" },
+  { id: "flood", name: "홍수 시대", color: "#2196F3" },
+  { id: "patriarchs", name: "족장 시대", color: "#FF9800" },
+  { id: "exodus", name: "출애굽 시대", color: "#DC143C" },
+  { id: "conquest", name: "정복 시대", color: "#228B22" },
+  { id: "judges", name: "사사 시대", color: "#607D8B" },
+  { id: "kingdom", name: "왕국 시대", color: "#4169E1" },
+  { id: "divided", name: "분열 왕국 시대", color: "#9E9E9E" },
+  { id: "exile", name: "포로 시대", color: "#424242" },
+  { id: "newTestament", name: "신약 시대", color: "#B71C1C" },
 ];
 
 export default function TimelineClient({ events, characters }) {
@@ -110,7 +111,7 @@ export default function TimelineClient({ events, characters }) {
 
                   {/* Card */}
                   <div className="bg-white rounded-xl p-5 border border-stone-200 shadow-sm">
-                    {/* Era tag & year */}
+                    {/* Era tag */}
                     <div className="flex items-center gap-2 mb-3">
                       <span
                         className="inline-block px-2.5 py-0.5 rounded-full text-base font-medium"
@@ -120,9 +121,6 @@ export default function TimelineClient({ events, characters }) {
                         }}
                       >
                         {event.era}
-                      </span>
-                      <span className="text-base text-stone-400">
-                        {event.year}
                       </span>
                     </div>
 
@@ -136,7 +134,19 @@ export default function TimelineClient({ events, characters }) {
                     {/* Verse reference */}
                     <div className="flex items-center gap-1.5 text-base text-stone-400 mb-4">
                       <BookOpen size={12} />
-                      <span>{event.verse}</span>
+                      {(() => {
+                        const link = parseVerseRef(event.verse);
+                        return link ? (
+                          <Link
+                            href={link.href}
+                            className="hover:text-stone-700 hover:underline transition-colors"
+                          >
+                            {event.verse}
+                          </Link>
+                        ) : (
+                          <span>{event.verse}</span>
+                        );
+                      })()}
                     </div>
 
                     {/* Related characters */}

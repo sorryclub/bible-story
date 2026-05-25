@@ -145,7 +145,7 @@ export default function CharactersClient({ characters, periods }) {
                     <CharacterAvatar character={char} size={140} priority={i < 10} />
                   </div>
                   <h3 className="font-bold text-stone-900 text-lg">{char.name}</h3>
-                  <p className="text-base text-stone-500 mt-0.5">{char.nameEn}</p>
+                  <p className="text-base text-stone-500 mt-0.5 break-words">{char.nameEn}</p>
                   <p className="text-base text-stone-600 mt-1 font-medium line-clamp-2">{char.role}</p>
                   <div className="mt-auto pt-2">
                     <span className={`inline-block px-2.5 py-0.5 rounded-md text-base font-medium ${PERIOD_COLORS[char.period]?.bg || "bg-stone-200"} ${PERIOD_COLORS[char.period]?.text || "text-stone-600"}`}>

@@ -4,20 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  BookOpen, ScrollText, BookMarked, Music, Megaphone,
-  Cross, Mail, Sparkles, ChevronRight, List, LayoutGrid,
+  BookOpen, Cross, Mail, Scroll, Landmark, Feather, Flame, Crown,
+  ChevronRight, List, LayoutGrid,
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 const CATEGORY_INFO = {
-  율법서: { Icon: ScrollText, desc: "모세 오경. 창조부터 이스라엘의 율법과 광야 여정까지", bg: "bg-white", border: "border-[#D4E4CF]", accent: "text-[#2D7A4F]", iconBg: "bg-[#E9F5E5]", badge: "bg-[#2D7A4F] text-white" },
-  역사서: { Icon: BookMarked, desc: "이스라엘의 가나안 정복, 왕국, 포로, 귀환의 역사", bg: "bg-white", border: "border-[#C8DAF0]", accent: "text-[#2B5EA7]", iconBg: "bg-[#E3EEFA]", badge: "bg-[#2B5EA7] text-white" },
-  시가서: { Icon: Music, desc: "시, 지혜, 노래. 삶의 의미와 하나님을 향한 찬양", bg: "bg-white", border: "border-[#EFCFD8]", accent: "text-[#B5436A]", iconBg: "bg-[#FBEAEF]", badge: "bg-[#B5436A] text-white" },
-  선지서: { Icon: Megaphone, desc: "하나님의 메시지를 전한 선지자들. 심판 경고와 구원 약속", bg: "bg-white", border: "border-[#EDDCC4]", accent: "text-[#B07830]", iconBg: "bg-[#FBF2E5]", badge: "bg-[#B07830] text-white" },
-  복음서: { Icon: Cross, desc: "예수 그리스도의 생애, 가르침, 죽음과 부활", bg: "bg-white", border: "border-[#C5DED5]", accent: "text-[#1A7A5A]", iconBg: "bg-[#E2F3EC]", badge: "bg-[#1A7A5A] text-white" },
-  서신서: { Icon: Mail, desc: "사도들이 교회와 개인에게 보낸 편지. 교리와 삶의 지침", bg: "bg-white", border: "border-[#D5CFF0]", accent: "text-[#5E4CA0]", iconBg: "bg-[#EDEAFC]", badge: "bg-[#5E4CA0] text-white" },
-  예언서: { Icon: Sparkles, desc: "예수 그리스도의 재림과 최후 심판, 새 하늘 새 땅", bg: "bg-white", border: "border-[#E8CDD0]", accent: "text-[#A03040]", iconBg: "bg-[#FAEAEC]", badge: "bg-[#A03040] text-white" },
+  율법서: { Icon: Scroll, color: "#2D7A4F", desc: "모세 오경. 창조부터 이스라엘의 율법과 광야 여정까지", bg: "bg-white", border: "border-[#D4E4CF]", accent: "text-[#2D7A4F]", badge: "bg-[#2D7A4F] text-white" },
+  역사서: { Icon: Landmark, color: "#2B5EA7", desc: "이스라엘의 가나안 정복, 왕국, 포로, 귀환의 역사", bg: "bg-white", border: "border-[#C8DAF0]", accent: "text-[#2B5EA7]", badge: "bg-[#2B5EA7] text-white" },
+  시가서: { Icon: Feather, color: "#B5436A", desc: "시, 지혜, 노래. 삶의 의미와 하나님을 향한 찬양", bg: "bg-white", border: "border-[#EFCFD8]", accent: "text-[#B5436A]", badge: "bg-[#B5436A] text-white" },
+  선지서: { Icon: Flame, color: "#B07830", desc: "하나님의 메시지를 전한 선지자들. 심판 경고와 구원 약속", bg: "bg-white", border: "border-[#EDDCC4]", accent: "text-[#B07830]", badge: "bg-[#B07830] text-white" },
+  복음서: { Icon: Cross, color: "#1A7A5A", desc: "예수 그리스도의 생애, 가르침, 죽음과 부활", bg: "bg-white", border: "border-[#C5DED5]", accent: "text-[#1A7A5A]", badge: "bg-[#1A7A5A] text-white" },
+  서신서: { Icon: Mail, color: "#5E4CA0", desc: "사도들이 교회와 개인에게 보낸 편지. 교리와 삶의 지침", bg: "bg-white", border: "border-[#D5CFF0]", accent: "text-[#5E4CA0]", badge: "bg-[#5E4CA0] text-white" },
+  예언서: { Icon: Crown, color: "#A03040", desc: "예수 그리스도의 재림과 최후 심판, 새 하늘 새 땅", bg: "bg-white", border: "border-[#E8CDD0]", accent: "text-[#A03040]", badge: "bg-[#A03040] text-white" },
 };
 
 // 공통 카드 컴포넌트
@@ -160,6 +160,7 @@ function BooksContent({ oldTestament, newTestament }) {
           grouped.map((group, gi) => {
             const info = CATEGORY_INFO[group.category] || {};
             const Icon = info.Icon || BookOpen;
+            const color = info.color || "#57534E";
             return (
               <motion.div
                 key={group.category + activeTab + gi}
@@ -168,13 +169,19 @@ function BooksContent({ oldTestament, newTestament }) {
                 transition={{ delay: gi * 0.06, duration: 0.4 }}
                 className="mb-12"
               >
-                <div className={`rounded-xl p-5 mb-5 ${info.bg || "bg-stone-50"} ${info.border || "border-stone-200"} border`}>
+                <div
+                  className="rounded-2xl p-5 mb-5"
+                  style={{ backgroundColor: `${color}12` }}
+                >
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl ${info.iconBg || "bg-stone-100"} flex items-center justify-center shrink-0`}>
-                      <Icon size={22} className={info.accent || "text-stone-600"} strokeWidth={1.8} />
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+                      style={{ backgroundColor: color }}
+                    >
+                      <Icon size={22} color="#ffffff" strokeWidth={2} />
                     </div>
                     <div>
-                      <h2 className={`text-xl font-bold ${info.accent || "text-stone-800"}`}>
+                      <h2 className="text-xl font-bold" style={{ color }}>
                         {group.category}
                         <span className="ml-2 text-base font-normal text-stone-400">
                           {group.books.length}권

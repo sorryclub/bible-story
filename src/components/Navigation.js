@@ -47,12 +47,18 @@ export default function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200">
-      <nav className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-md bg-stone-800 flex items-center justify-center">
-            <BookOpen size={14} className="text-white" strokeWidth={2.5} />
-          </div>
-          <span className="text-base font-bold text-stone-900 tracking-tight">
+      <nav className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <svg width="22" height="26" viewBox="3.5 2 17 20" aria-hidden="true">
+            <path
+              d="M9.5 2 L14.5 2 L13.4 8.1 L20.5 7 L20.5 12 L13.4 10.9 L14.5 22 L9.5 22 L10.6 10.9 L3.5 12 L3.5 7 L10.6 8.1 Z"
+              fill="#1E3A8A"
+            />
+          </svg>
+          <span
+            className="text-3xl font-extrabold tracking-tight"
+            style={{ fontFamily: "var(--font-nanum-myeongjo), serif", color: "#1E3A8A" }}
+          >
             진리
           </span>
         </Link>
@@ -65,10 +71,10 @@ export default function Navigation() {
               <Link
                 key={href}
                 href={href}
-                className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5
+                className={`px-4 py-2 rounded-md text-base font-medium transition-colors flex items-center gap-1.5
                   ${active ? "bg-stone-100 text-stone-900" : "text-stone-500 hover:text-stone-800 hover:bg-stone-50"}`}
               >
-                <Icon size={15} strokeWidth={active ? 2.2 : 1.8} />
+                <Icon size={16} strokeWidth={active ? 2.2 : 1.8} />
                 {label}
               </Link>
             );
@@ -78,11 +84,11 @@ export default function Navigation() {
           <div className="relative" ref={moreRef}>
             <button
               onClick={() => setMoreOpen(!moreOpen)}
-              className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1
+              className={`px-4 py-2 rounded-md text-base font-medium transition-colors flex items-center gap-1
                 ${isMoreActive ? "bg-stone-100 text-stone-900" : "text-stone-500 hover:text-stone-800 hover:bg-stone-50"}`}
             >
               더보기
-              <ChevronDown size={14} className={`transition-transform ${moreOpen ? "rotate-180" : ""}`} />
+              <ChevronDown size={15} className={`transition-transform ${moreOpen ? "rotate-180" : ""}`} />
             </button>
 
             {moreOpen && (

@@ -3,7 +3,14 @@
 import { useEffect, useRef, useState, useMemo } from "react";
 import "leaflet/dist/leaflet.css";
 
-const MARKER_SIZE = 10;
+// 중요도별 점 지름(px)
+const DOT_SIZE = { 3: 18, 2: 14, 1: 11, 0: 9 };
+// 중요도별 라벨 스타일 (계층화)
+function labelStyle(imp) {
+  if (imp >= 2) return { fs: 12.5, fw: 600, c: "#1c1917" };
+  if (imp === 1) return { fs: 11.5, fw: 500, c: "#44403c" };
+  return { fs: 10.5, fw: 500, c: "#78716c" };
+}
 
 export default function BibleMap({
   locations = [],
@@ -77,23 +84,28 @@ export default function BibleMap({
       locations.forEach((loc) => {
         const isOnJourney = journeyLocationIds.has(loc.id);
         const isSelected = selectedLocation === loc.id;
-        const color = isOnJourney && activeJourney ? activeJourney.color : "#1C1917";
-        const s = isSelected ? MARKER_SIZE + 3 : MARKER_SIZE;
-        const ring = isSelected ? `box-shadow:0 0 0 3px ${color}40, 0 2px 8px rgba(0,0,0,0.25);` : `box-shadow:0 1px 4px rgba(0,0,0,0.2);`;
+        const color = isOnJourney && activeJourney ? activeJourney.color : "#B45309";
+        const base = DOT_SIZE[loc.importance] || 9;
+        const d = isSelected ? base + 4 : base;
+        const ring = isSelected
+          ? `box-shadow:0 0 0 4px ${color}33, 0 1px 3px rgba(0,0,0,0.3);`
+          : `box-shadow:0 1px 3px rgba(0,0,0,0.35);`;
+        const lbl = labelStyle(loc.importance);
 
         const icon = L.divIcon({
           className: "",
-          iconSize: [120, s * 2 + 22],
-          iconAnchor: [60, s + 2],
+          iconSize: [140, d + 24],
+          iconAnchor: [70, d / 2 + 2],
           html: `<div style="display:flex;flex-direction:column;align-items:center;pointer-events:none;">
-            <div style="width:${s * 2}px;height:${s * 2}px;border-radius:50%;background:white;border:2px solid ${color};${ring}display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer;">
-              <div style="width:${s * 0.7}px;height:${s * 0.7}px;border-radius:50%;background:${color};"></div>
-            </div>
-            <div style="margin-top:2px;font-size:12px;font-weight:600;color:#1C1917;white-space:nowrap;text-shadow:0 0 3px white,0 0 3px white,0 0 3px white,0 0 3px white;pointer-events:none;">${loc.name}</div>
+            <div style="width:${d}px;height:${d}px;border-radius:50%;background:${color};border:2.5px solid #ffffff;box-sizing:border-box;${ring}pointer-events:auto;cursor:pointer;"></div>
+            <div style="margin-top:3px;font-size:${lbl.fs}px;font-weight:${lbl.fw};color:${lbl.c};white-space:nowrap;text-shadow:0 0 2px #fff,0 0 2px #fff,0 1px 2px #fff;pointer-events:none;">${loc.name}</div>
           </div>`,
         });
 
-        const marker = L.marker([loc.lat, loc.lng], { icon })
+        const marker = L.marker([loc.lat, loc.lng], {
+          icon,
+          zIndexOffset: (loc.importance || 0) * 100,
+        })
           .addTo(map)
           .on("click", () => onSelectLocation?.(loc.id));
 
@@ -194,8 +206,7 @@ export default function BibleMap({
   return (
     <div
       ref={mapRef}
-      className="w-full rounded-xl overflow-hidden"
-      style={{ height: "70vh", minHeight: 400 }}
+      className="relative z-0 w-full rounded-xl overflow-hidden h-[48vh] min-h-[320px] md:h-[70vh]"
     />
   );
 }
