@@ -17,7 +17,7 @@ const nanumMyeongjo = Nanum_Myeongjo({
 
 const SITE_URL = "https://xn--oy2b970a.com"; // 진리.com
 const SITE_DESC =
-  "성경의 이야기를 시각적으로 알기 쉽게 보여주는 사이트. 인물, 타임라인, 챕터별로 하나님의 이야기를 살펴보세요.";
+  "인물·타임라인·지도·성경 66권으로 따라가는 성경 이야기. 창세기부터 요한계시록까지 한눈에.";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -27,7 +27,7 @@ export const metadata = {
   },
   description: SITE_DESC,
   openGraph: {
-    title: "진리",
+    title: "진리 — 성경 이야기를 한눈에",
     description: SITE_DESC,
     url: SITE_URL,
     siteName: "진리",
@@ -36,7 +36,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "진리",
+    title: "진리 — 성경 이야기를 한눈에",
     description: SITE_DESC,
   },
   verification: {
