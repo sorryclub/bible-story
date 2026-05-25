@@ -42,6 +42,9 @@ export const metadata = {
   },
   verification: {
     google: "ydinXmdTlr0q-ZeAMl4qK8bQ6jdSzMpy9pV-0vf9NcI",
+    other: {
+      "naver-site-verification": "4625f39d8d9e7a6fbb0ed8a7ec33d9a6d56dd2c4",
+    },
   },
   // iOS 홈화면 웹앱
   appleWebApp: {
