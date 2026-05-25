@@ -32,6 +32,9 @@ export const metadata = {
     title: "진리 — 성경 이야기",
     description: SITE_DESC,
   },
+  verification: {
+    google: "ydinXmdTlr0q-ZeAMl4qK8bQ6jdSzMpy9pV-0vf9NcI",
+  },
 };
 
 export default function RootLayout({ children }) {
