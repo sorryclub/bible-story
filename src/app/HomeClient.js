@@ -142,31 +142,19 @@ export default function HomeClient({ characters, timelineEvents }) {
       {/* ── 안내 ── */}
       <section className="bg-white py-10 border-t border-stone-100">
         <div className="max-w-3xl mx-auto px-6">
-          <div className="bg-stone-50 rounded-2xl p-5 sm:p-8 border border-stone-200">
-            {/* 모바일: 중앙 정렬 문단 */}
-            <div className="sm:hidden text-center">
-              <h3 className="text-lg font-bold text-stone-900 mb-3">진리는 오직 성경에 기반합니다</h3>
-              <p className="text-base text-stone-600 leading-relaxed">
-                모든 콘텐츠는 성경 본문에 기록된 내용만을 다루며,
-                특정 교단이나 교파에 소속되지 않고
-                어떠한 이단 단체와도 무관합니다.
-                추정, 전승, 외경의 내용은 포함하지 않으며,
-                누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다.
-              </p>
-            </div>
-            {/* 데스크톱: 아이콘 + 리스트 */}
-            <div className="hidden sm:flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white border border-stone-200">
-                <BookOpen size={20} className="text-stone-600" />
+          <div className="bg-stone-50 rounded-2xl px-4 py-5 sm:px-6 sm:py-8 border border-stone-200">
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 bg-white border border-stone-200">
+                <BookOpen size={18} className="text-stone-600" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-stone-900 mb-2">진리는 오직 성경에 기반합니다</h3>
-                <ul className="space-y-1.5 text-base text-stone-600 leading-relaxed">
-                  <li>모든 콘텐츠는 성경 본문에 기록된 내용만을 다룹니다</li>
-                  <li>특정 교단이나 교파에 소속되지 않으며, 어떠한 이단 단체와도 무관합니다</li>
-                  <li>추정, 전승, 외경의 내용은 포함하지 않습니다</li>
-                  <li>누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다</li>
-                </ul>
+                <div className="text-base text-stone-600 leading-relaxed text-justify space-y-2">
+                  <p>모든 콘텐츠는 성경 본문에 기록된 내용만을 다룹니다.</p>
+                  <p>특정 교단이나 교파에 소속되지 않으며, 어떠한 이단 단체와도 무관합니다.</p>
+                  <p>추정, 전승, 외경의 내용은 포함하지 않습니다.</p>
+                  <p>누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다.</p>
+                </div>
               </div>
             </div>
           </div>
