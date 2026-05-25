@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
-export default function CharacterAvatar({ character, size = 120 }) {
+export default function CharacterAvatar({ character, size = 120, priority = false }) {
   const [error, setError] = useState(false);
   const r2 = process.env.NEXT_PUBLIC_R2_URL || "";
   const src = r2 ? `${r2}/characters/${character.id}.jpg` : `/characters/${character.id}.jpg`;
@@ -25,14 +26,14 @@ export default function CharacterAvatar({ character, size = 120 }) {
       className="rounded-2xl overflow-hidden"
       style={{ width: size, height: size, backgroundColor: `${character.color}08` }}
     >
-      <img
+      <Image
         src={src}
         alt={character.name}
         width={size}
         height={size}
+        priority={priority}
         className="w-full h-full object-cover"
         onError={() => setError(true)}
-        loading="lazy"
       />
     </div>
   );

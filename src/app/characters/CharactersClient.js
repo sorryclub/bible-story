@@ -142,7 +142,7 @@ export default function CharactersClient({ characters, periods }) {
               <Link key={char.id} href={`/characters/${char.id}`} className="block group">
                 <div className="bg-white rounded-xl p-4 text-center border border-stone-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all h-full flex flex-col">
                   <div className="flex justify-center mb-3">
-                    <CharacterAvatar character={char} size={140} />
+                    <CharacterAvatar character={char} size={140} priority={i < 10} />
                   </div>
                   <h3 className="font-bold text-stone-900 text-lg">{char.name}</h3>
                   <p className="text-base text-stone-500 mt-0.5">{char.nameEn}</p>
