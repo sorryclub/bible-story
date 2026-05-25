@@ -149,12 +149,9 @@ export default function HomeClient({ characters, timelineEvents }) {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-stone-900 mb-2">진리는 오직 성경에 기반합니다</h3>
-                <div className="text-base text-stone-600 leading-relaxed text-justify space-y-2">
-                  <p>모든 콘텐츠는 성경 본문에 기록된 내용만을 다룹니다.</p>
-                  <p>특정 교단이나 교파에 소속되지 않으며, 어떠한 이단 단체와도 무관합니다.</p>
-                  <p>추정, 전승, 외경의 내용은 포함하지 않습니다.</p>
-                  <p>누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다.</p>
-                </div>
+                <p className="text-base text-stone-600 leading-[1.8] text-justify">
+                  모든 콘텐츠는 성경 본문에 기록된 내용만을 다루며, 특정 교단이나 교파에 소속되지 않고 어떠한 이단 단체와도 무관합니다. 추정, 전승, 외경의 내용은 포함하지 않으며, 누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다.
+                </p>
               </div>
             </div>
           </div>
