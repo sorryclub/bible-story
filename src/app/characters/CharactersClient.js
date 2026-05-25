@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Users, Search, ArrowUpDown } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
 
@@ -23,10 +24,41 @@ const PERIOD_ORDER = [
   "사사 시대", "왕국 시대", "분열 왕국 시대", "포로 시대", "신약 시대",
 ];
 
+const SCROLL_KEY = "characters-scroll";
+
 export default function CharactersClient({ characters, periods }) {
   const [selectedPeriod, setSelectedPeriod] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortMode, setSortMode] = useState("bible"); // "bible" | "name"
+
+  // 스크롤 위치 실시간 저장 (클라이언트 네비게이션에서도 동작)
+  useEffect(() => {
+    let timer;
+    const save = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
+      }, 100);
+    };
+    window.addEventListener("scroll", save, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", save);
+    };
+  }, []);
+
+  // 스크롤 위치 복원
+  useEffect(() => {
+    const saved = sessionStorage.getItem(SCROLL_KEY);
+    if (saved) {
+      const y = parseInt(saved, 10);
+      // 이미지 로드 후 높이가 바뀔 수 있으므로 약간 지연
+      const t1 = setTimeout(() => window.scrollTo(0, y), 0);
+      const t2 = setTimeout(() => window.scrollTo(0, y), 100);
+      const t3 = setTimeout(() => window.scrollTo(0, y), 300);
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    }
+  }, []);
 
   const filteredCharacters = useMemo(() => {
     let result = characters.filter((c) => {

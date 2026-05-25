@@ -42,7 +42,7 @@ export const prophecies = [
   },
   {
     id: "forerunner",
-    title: "세례 요한의 예비",
+    title: "침례 요한의 예비",
     otVerse: "이사야 40:3",
     otText:
       "외치는 자의 소리여 너희는 광야에서 여호와의 길을 예비하라 사막에서 우리 하나님의 대로를 평탄하게 하라",

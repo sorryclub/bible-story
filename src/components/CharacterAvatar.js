@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function CharacterAvatar({ character, size = 120, priority = false, className = "" }) {
   const [error, setError] = useState(false);
+  const [cacheBust, setCacheBust] = useState("");
   const r2 = process.env.NEXT_PUBLIC_R2_URL || "";
-  const src = r2 ? `${r2}/characters/${character.id}.jpg` : `/characters/${character.id}.jpg`;
+  const base = r2 ? `${r2}/characters/${character.id}.jpg` : `/characters/${character.id}.jpg`;
+  const src = cacheBust ? `${base}?v=${cacheBust}` : base;
+
+  // hydration 후 캐시 무효화 파라미터 추가
+  useEffect(() => {
+    setCacheBust(String(Math.floor(Date.now() / 60000)));
+  }, []);
 
   // className이 주어지면 크기를 className(반응형 가능)으로 제어하고, 없으면 기존처럼 인라인 size 사용
   const sizeStyle = className ? {} : { width: size, height: size };

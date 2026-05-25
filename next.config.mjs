@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    scrollRestoration: true,
+  },
   images: {
     // R2 인물/스토리 이미지 원본 호스트 (next/image 최적화 허용)
     remotePatterns: [

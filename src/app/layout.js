@@ -66,11 +66,8 @@ export default function RootLayout({ children }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
               {/* 서비스 소개 */}
               <div>
-                <h3
-                  className="text-2xl font-extrabold tracking-tight mb-3"
-                  style={{ fontFamily: "var(--font-nanum-myeongjo), serif", color: "#1E3A8A" }}
-                >
-                  진리
+                <h3 className="text-2xl font-black tracking-tight text-stone-900 mb-3">
+                  진리 <span className="text-sm font-semibold tracking-widest text-stone-400 uppercase">bible</span>
                 </h3>
                 <p className="text-base text-stone-500 leading-relaxed">
                   성경의 이야기를 시각적으로 쉽게 이해할 수 있도록 만든 서비스입니다. 모든 콘텐츠는 성경 본문에 기반합니다.

@@ -616,7 +616,7 @@ export const books = {
       keyTheme: "종이신 그리스도",
       uniquePerspective: "가장 짧고 빠른 속도의 복음서입니다. '즉시'(곧)라는 단어가 40회 이상 등장하며, 행동하시는 예수님의 모습을 생생하게 전합니다.",
       highlights: [
-        { chapter: "1", title: "세례와 광야 시험", desc: "요단강 세례와 40일 광야 시험" },
+        { chapter: "1", title: "침례와 광야 시험", desc: "요단강 침례와 40일 광야 시험" },
         { chapter: "2", title: "중풍병자 치유", desc: "지붕을 뚫고 내려보낸 중풍병자의 치유" },
         { chapter: "4", title: "바다를 잠잠케 하심", desc: "잠잠하라 고요하라, 풍랑이 그침" },
         { chapter: "6", title: "오병이어", desc: "오천 명을 먹이신 기적" },

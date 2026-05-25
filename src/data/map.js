@@ -198,7 +198,7 @@ export const locations = [
     ] },
   { id: "ethiopia", name: "에디오피아 (구스)", nameEn: "Ethiopia / Cush", lat: 15.0, lng: 38.0, region: "아프리카", importance: 1,
     events: [
-      { title: "에디오피아 내시의 회심과 세례", verse: "사도행전 8:26-39", era: "신약" },
+      { title: "에디오피아 내시의 회심과 침례", verse: "사도행전 8:26-39", era: "신약" },
     ] },
   { id: "arabia", name: "아라비아", nameEn: "Arabia", lat: 25.0, lng: 40.0, region: "아라비아", importance: 0,
     events: [

@@ -139,6 +139,28 @@ export default function HomeClient({ characters, timelineEvents }) {
         </div>
       </section>
 
+      {/* ── 안내 ── */}
+      <section className="bg-white py-10 border-t border-stone-100">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="bg-stone-50 rounded-2xl p-6 sm:p-8 border border-stone-200">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-white border border-stone-200">
+                <BookOpen size={20} className="text-stone-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-stone-900 mb-2">진리는 오직 성경에 기반합니다</h3>
+                <ul className="space-y-1.5 text-base text-stone-600 leading-relaxed">
+                  <li>모든 콘텐츠는 성경 본문에 기록된 내용만을 다룹니다</li>
+                  <li>특정 교단이나 교파에 소속되지 않으며, 어떠한 이단 단체와도 무관합니다</li>
+                  <li>추정, 전승, 외경의 내용은 포함하지 않습니다</li>
+                  <li>누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── 성경 한눈에 보기 ── */}
       <section className="bg-[#FAFAF7] py-24 border-t border-stone-100">
         <div className="max-w-5xl mx-auto px-6">

@@ -24,10 +24,34 @@ function StoryImage({ src, index }) {
   );
 }
 
+// 쉼표로 나열된 항목이 3개 이상이면 줄바꿈으로 표시
+function CommaList({ text }) {
+  // 쉼표 3개 이상인 연속 구간을 찾아 리스트로 렌더링
+  // "A, B, C, D까지 했다" → 각 항목을 별도 줄로 표시
+  const commaCount = (text.match(/,/g) || []).length;
+  if (commaCount < 3) return <>{text}</>;
+
+  const items = text.split(/,\s*/);
+  return (
+    <span className="inline">
+      {items.map((item, i) => (
+        <span key={i}>
+          {i > 0 && <br />}
+          {i > 0 && <span className="text-stone-400 mr-1">•</span>}
+          {item.trim()}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 // 구절 참조를 기준으로 단락을 나누고, 구절은 뱃지로 표시, 장면 이미지 삽입
 export function StyledDescription({ text, characterId }) {
   const versePattern = /(\([^)]*\d+[:\d\-,\s장]*[^)]*\))/g;
-  const normalized = text.replace(/(\([^)]*\d+[:\d\-,\s장]*[^)]*\))\.\s*/g, "$1\n");
+  // 구절 참조 뒤 마침표 또는 구절 참조 뒤 공백+한글(새 문장 시작)에서 단락 분리
+  let normalized = text.replace(/(\([^)]*\d+[:\d\-,\s장]*[^)]*\))\.\s*/g, "$1\n");
+  // 마침표+공백 뒤 새 문장이 시작되면 단락 분리 (긴 텍스트를 위해)
+  normalized = normalized.replace(/([.。])\s{2,}/g, "$1\n");
   const paragraphs = normalized.split("\n").filter(p => p.trim());
 
   return (
@@ -71,7 +95,7 @@ export function StyledDescription({ text, characterId }) {
                 }
                 const cleaned = part.replace(/^\.\s*/, "").replace(/\s+$/, "");
                 if (!cleaned) return null;
-                return <span key={i}>{cleaned}</span>;
+                return <span key={i}><CommaList text={cleaned} /></span>;
               })}
             </p>
           </div>

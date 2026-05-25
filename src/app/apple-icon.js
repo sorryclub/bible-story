@@ -1,10 +1,23 @@
 import { ImageResponse } from "next/og";
 
-// iOS 홈화면 아이콘 — 네이비 타일 + 흰 파테 크로스
+// iOS 홈화면 아이콘 — 네이비 타일 + 흰 "진" 글자
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-export default function AppleIcon() {
+async function loadGoogleFont(family, text) {
+  const url = `https://fonts.googleapis.com/css2?family=${family}&text=${encodeURIComponent(text)}`;
+  const css = await (await fetch(url)).text();
+  const resource = css.match(/src: url\((.+?)\) format\('(?:opentype|truetype)'\)/);
+  if (resource) {
+    const res = await fetch(resource[1]);
+    if (res.status === 200) return res.arrayBuffer();
+  }
+  throw new Error("폰트 로드 실패");
+}
+
+export default async function AppleIcon() {
+  const font = await loadGoogleFont("Noto+Sans+KR:wght@900", "진");
+
   return new ImageResponse(
     (
       <div
@@ -15,16 +28,19 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          fontFamily: "Noto Sans KR",
         }}
       >
-        <svg width="108" height="126" viewBox="3 1.5 18 21" fill="none">
-          <path
-            d="M9.5 2 L14.5 2 L13.4 8.1 L20.5 7 L20.5 12 L13.4 10.9 L14.5 22 L9.5 22 L10.6 10.9 L3.5 12 L3.5 7 L10.6 8.1 Z"
-            fill="#ffffff"
-          />
-        </svg>
+        <span style={{ fontSize: 110, fontWeight: 900, color: "#ffffff" }}>
+          진
+        </span>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      fonts: [
+        { name: "Noto Sans KR", data: font, style: "normal", weight: 900 },
+      ],
+    }
   );
 }

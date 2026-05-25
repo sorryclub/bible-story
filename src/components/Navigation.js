@@ -48,18 +48,12 @@ export default function Navigation() {
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200">
       <nav className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <svg width="22" height="26" viewBox="3.5 2 17 20" aria-hidden="true">
-            <path
-              d="M9.5 2 L14.5 2 L13.4 8.1 L20.5 7 L20.5 12 L13.4 10.9 L14.5 22 L9.5 22 L10.6 10.9 L3.5 12 L3.5 7 L10.6 8.1 Z"
-              fill="#1E3A8A"
-            />
-          </svg>
-          <span
-            className="text-3xl font-extrabold tracking-tight"
-            style={{ fontFamily: "var(--font-nanum-myeongjo), serif", color: "#1E3A8A" }}
-          >
+        <Link href="/" className="flex items-center gap-1.5">
+          <span className="text-2xl font-black tracking-tight text-stone-900">
             진리
+          </span>
+          <span className="text-[11px] font-semibold tracking-widest text-stone-400 uppercase mt-0.5">
+            bible
           </span>
         </Link>
 
