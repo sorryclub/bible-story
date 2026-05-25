@@ -37,11 +37,11 @@ export default async function Image() {
           fontFamily: "Noto Sans KR",
         }}
       >
-        <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           <span style={{ fontSize: 120, fontWeight: 900, color: "#ffffff", letterSpacing: -2 }}>
             진리
           </span>
-          <span style={{ fontSize: 36, fontWeight: 700, color: "rgba(255,255,255,0.45)", letterSpacing: 8, textTransform: "uppercase" }}>
+          <span style={{ fontSize: 40, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 8 }}>
             BIBLE
           </span>
         </div>
