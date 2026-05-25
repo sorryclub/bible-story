@@ -1,6 +1,7 @@
 import { Noto_Sans_KR, Nanum_Myeongjo } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import PageTracker from "@/components/PageTracker";
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ["latin"],
@@ -60,6 +61,7 @@ export default function RootLayout({ children }) {
     <html lang="ko" className={`${notoSansKR.variable} ${nanumMyeongjo.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-[#FAFAF7] antialiased">
         <Navigation />
+        <PageTracker />
         <main className="flex-1">{children}</main>
         <footer className="border-t border-stone-200 mt-20 bg-white">
           <div className="max-w-5xl mx-auto px-6 py-14">
