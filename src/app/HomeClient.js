@@ -111,11 +111,11 @@ export default function HomeClient({ characters, timelineEvents }) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.28, duration: 0.55 }}
-            className="mt-10 flex flex-wrap justify-center gap-3"
+            className="mt-10 flex flex-col items-stretch sm:flex-row sm:flex-wrap sm:items-center justify-center gap-3"
           >
             <Link
               href="/timeline"
-              className="inline-flex items-center gap-2 px-7 py-3.5 text-white rounded-xl font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="flex w-full justify-center sm:inline-flex sm:w-auto items-center gap-2 px-7 py-3.5 text-white rounded-xl font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
               style={{ backgroundColor: NAVY }}
             >
               <Clock size={18} />
@@ -123,14 +123,14 @@ export default function HomeClient({ characters, timelineEvents }) {
             </Link>
             <Link
               href="/characters"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-stone-50"
+              className="flex w-full justify-center sm:inline-flex sm:w-auto items-center gap-2 px-7 py-3.5 bg-white text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-stone-50"
             >
               <Users size={18} />
               성경 인물
             </Link>
             <Link
               href="/books"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-stone-50"
+              className="flex w-full justify-center sm:inline-flex sm:w-auto items-center gap-2 px-7 py-3.5 bg-white text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-stone-50"
             >
               <BookOpen size={18} />
               성경 66권
@@ -192,15 +192,15 @@ export default function HomeClient({ characters, timelineEvents }) {
           <div className="space-y-4">
             {featuredCharacters.map((char) => (
               <Link key={char.id} href={`/characters/${char.id}`} className="block group">
-                <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 flex items-center gap-5 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-                  <CharacterAvatar character={char} size={96} />
+                <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 flex items-center gap-4 sm:gap-5 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
+                  <CharacterAvatar character={char} size={96} className="w-16 h-16 sm:w-24 sm:h-24 shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-bold text-stone-900">{char.name}</h3>
-                      <span className="text-base text-stone-500">{char.nameEn}</span>
+                    <div className="flex items-baseline flex-wrap gap-x-2">
+                      <h3 className="text-lg sm:text-xl font-bold text-stone-900">{char.name}</h3>
+                      <span className="text-sm sm:text-base text-stone-500">{char.nameEn}</span>
                     </div>
-                    <p className="text-base font-medium text-stone-700 mt-0.5">{char.role}</p>
-                    <p className="text-base text-stone-500 mt-1 line-clamp-1">{char.shortDesc}</p>
+                    <p className="text-sm sm:text-base font-medium text-stone-700 mt-0.5 line-clamp-1">{char.role}</p>
+                    <p className="text-sm sm:text-base text-stone-500 mt-0.5 line-clamp-2 sm:line-clamp-1">{char.shortDesc}</p>
                   </div>
                   <ArrowRight size={18} className="text-stone-300 group-hover:text-stone-500 transition-colors shrink-0" />
                 </div>
@@ -227,15 +227,15 @@ export default function HomeClient({ characters, timelineEvents }) {
           <SectionHead eyebrow="TIMELINE" title="성경의 핵심 사건" subtitle="역사를 바꾼 하나님의 다섯 장면" />
 
           <div className="relative">
-            <div className="absolute left-6 top-2 bottom-2 w-0.5 bg-stone-200" />
+            <div className="absolute left-4 sm:left-6 top-2 bottom-2 w-0.5 bg-stone-200" />
             <div className="space-y-6">
               {keyMoments.map((event) => (
-                <div key={event.id} className="relative pl-16">
+                <div key={event.id} className="relative pl-10 sm:pl-16">
                   <div
-                    className="absolute left-[15px] top-6 w-5 h-5 rounded-full border-[3px] border-white shadow-sm"
+                    className="absolute left-[6px] sm:left-[15px] top-6 w-5 h-5 rounded-full border-[3px] border-white shadow-sm"
                     style={{ backgroundColor: event.color }}
                   />
-                  <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 transition-all hover:shadow-lg">
+                  <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 sm:p-6 transition-all hover:shadow-lg">
                     <p className="text-base font-semibold mb-1" style={{ color: event.color }}>
                       {event.era}
                     </p>

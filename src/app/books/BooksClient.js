@@ -101,7 +101,8 @@ function BooksContent({ oldTestament, newTestament }) {
         </p>
 
         {/* OT/NT 탭 + 보기 모드 토글 */}
-        <div className="relative flex items-center justify-center">
+        {/* 모바일: 세로로 쌓아 겹침 방지 / 데스크탑(md+): 가운데 탭 + 우측 절대배치 토글 */}
+        <div className="flex flex-col items-center gap-4 md:relative md:flex-row md:justify-center md:gap-0">
           {/* 가운데: 구약/신약 */}
           <div className="flex items-center gap-2">
             <button
@@ -127,7 +128,7 @@ function BooksContent({ oldTestament, newTestament }) {
           </div>
 
           {/* 우측 끝: 보기 모드 */}
-          <div className="absolute right-0 flex items-center border border-stone-200 rounded-lg overflow-hidden">
+          <div className="flex items-center border border-stone-200 rounded-lg overflow-hidden md:absolute md:right-0">
             <button
               onClick={() => setViewMode("order")}
               className={`flex items-center gap-1.5 px-3.5 py-2 text-base font-medium transition-colors ${
@@ -191,7 +192,7 @@ function BooksContent({ oldTestament, newTestament }) {
                     </div>
                   </div>
                 </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {group.books.map((book) => (
                     <BookCard key={book.id} book={book} />
                   ))}
@@ -201,7 +202,7 @@ function BooksContent({ oldTestament, newTestament }) {
           })
         ) : (
           /* ── 성경 순서대로 보기 ── */
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentBooks.map((book, i) => (
               <motion.div
                 key={book.id}
