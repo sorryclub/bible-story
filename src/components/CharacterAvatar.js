@@ -1,19 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
 export default function CharacterAvatar({ character, size = 120, priority = false, className = "" }) {
   const [error, setError] = useState(false);
-  const [cacheBust, setCacheBust] = useState("");
   const r2 = process.env.NEXT_PUBLIC_R2_URL || "";
   const base = r2 ? `${r2}/characters/${character.id}.jpg` : `/characters/${character.id}.jpg`;
-  const src = cacheBust ? `${base}?v=${cacheBust}` : base;
-
-  // hydration 후 캐시 무효화 파라미터 추가
-  useEffect(() => {
-    setCacheBust(String(Math.floor(Date.now() / 60000)));
-  }, []);
+  // 배포 버전을 ?v= 로 박아 서버/클라이언트가 같은 URL을 렌더한다(첫 페인트부터 버전 URL → 옛 이미지 깜빡임 없음).
+  // R2에서 이미지를 덮어쓴 뒤 새로 배포하면 이 버전이 바뀌어 캐시가 갱신된다.
+  const version = process.env.NEXT_PUBLIC_ASSET_VERSION || "";
+  const src = version ? `${base}?v=${version}` : base;
 
   // className이 주어지면 크기를 className(반응형 가능)으로 제어하고, 없으면 기존처럼 인라인 size 사용
   const sizeStyle = className ? {} : { width: size, height: size };
