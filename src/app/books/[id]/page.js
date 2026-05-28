@@ -12,6 +12,7 @@ import CharacterAvatar from "@/components/CharacterAvatar";
 import AnimatedSection from "./AnimatedSection";
 import { Suspense } from "react";
 import ChapterList from "./ChapterList";
+import StickyBookTitle from "./StickyBookTitle";
 
 export default async function BookDetailPage({ params }) {
   const { id } = await params;
@@ -57,6 +58,14 @@ export default async function BookDetailPage({ params }) {
 
   return (
     <div className="min-h-screen">
+      {/* 스크롤 시 제목이 사라지면 상단에 현재 책 이름 고정 표시 */}
+      <StickyBookTitle
+        name={book.name}
+        nameEn={book.nameEn}
+        color={catInfo?.color || book.color}
+        category={book.category}
+      />
+
       {/* Hero */}
       <section className="py-14 pb-10 border-b border-stone-100">
         <div className="max-w-5xl mx-auto px-6">
@@ -92,7 +101,10 @@ export default async function BookDetailPage({ params }) {
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl font-bold text-stone-900 mb-1 tracking-tight">
+            <h1
+              id="book-hero-title"
+              className="text-3xl font-bold text-stone-900 mb-1 tracking-tight"
+            >
               {book.name}
             </h1>
             <p className="text-base text-stone-400 mb-5">{book.nameEn}</p>
