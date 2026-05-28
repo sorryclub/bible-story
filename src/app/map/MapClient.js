@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { MapPin, Route, Info, X } from "lucide-react";
@@ -34,6 +34,16 @@ export default function MapClient({ locations, journeys, characters = [] }) {
   }, [characters]);
   const [selectedJourney, setSelectedJourney] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const mapSectionRef = useRef(null);
+
+  // 여정 버튼 클릭 시 상태 변경 후 지도 섹션으로 부드럽게 스크롤
+  function handleJourneyClick(id) {
+    setSelectedJourney(id === selectedJourney ? null : id);
+    // 상태 반영 후 DOM이 자리잡은 다음 프레임에 스크롤
+    requestAnimationFrame(() => {
+      mapSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 
   const activeJourney = useMemo(
     () => journeys.find((j) => j.id === selectedJourney) || null,
@@ -118,9 +128,7 @@ export default function MapClient({ locations, journeys, characters = [] }) {
                 {g.items.map((j) => (
                   <button
                     key={j.id}
-                    onClick={() =>
-                      setSelectedJourney(j.id === selectedJourney ? null : j.id)
-                    }
+                    onClick={() => handleJourneyClick(j.id)}
                     className={`px-4 py-2 rounded-lg text-base font-medium transition-colors flex items-center gap-2 ${
                       selectedJourney === j.id
                         ? "bg-stone-800 text-white"
@@ -167,7 +175,10 @@ export default function MapClient({ locations, journeys, characters = [] }) {
       )}
 
       {/* 지도 + 디테일 */}
-      <section className="max-w-6xl mx-auto px-6 pb-20">
+      <section
+        ref={mapSectionRef}
+        className="max-w-6xl mx-auto px-6 pb-20 scroll-mt-20"
+      >
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 min-w-0">
             <BibleMap
