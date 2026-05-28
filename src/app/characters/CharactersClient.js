@@ -143,7 +143,7 @@ export default function CharactersClient({ characters, periods }) {
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-stone-200 text-base font-medium text-stone-600 hover:bg-stone-50 transition-colors"
           >
             <Network size={16} className="text-stone-400" />
-            인물 관계도·족보 보기
+            성경 인물 계보 보기
           </Link>
         </div>
 

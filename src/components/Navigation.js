@@ -17,7 +17,7 @@ const mainNav = [
 ];
 
 const moreNav = [
-  { href: "/genealogy", label: "인물 관계도", Icon: Network },
+  { href: "/genealogy", label: "인물 계보", Icon: Network },
   { href: "/glossary", label: "성경 사전", Icon: Library },
   { href: "/topics", label: "주제별 성경", Icon: Tags },
   { href: "/parables", label: "예수님의 비유", Icon: MessageCircle },

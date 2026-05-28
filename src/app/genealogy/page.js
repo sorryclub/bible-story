@@ -4,9 +4,9 @@ import GenealogyTree from "./GenealogyTree";
 import { Network, BookOpen } from "lucide-react";
 
 export const metadata = {
-  title: "인물 관계도",
+  title: "성경 인물 계보",
   description:
-    "성경 본문에 근거한 인물 가계도. 아담·아브라함·다윗에서 예수 그리스도까지 이어지는 족보를 한눈에.",
+    "성경 본문에 근거한 인물 계보. 아담·아브라함·다윗에서 예수 그리스도까지 이어지는 계보를 한눈에.",
 };
 
 export default async function GenealogyPage() {
@@ -23,11 +23,11 @@ export default async function GenealogyPage() {
         <div className="flex items-center gap-2 mb-2">
           <Network size={22} className="text-stone-400" />
           <h1 className="text-3xl md:text-4xl font-bold text-stone-900">
-            인물 관계도 · 성경 족보
+            성경 인물 계보
           </h1>
         </div>
         <p className="text-lg text-stone-500">
-          성경 본문에 근거한 주요 가계도입니다. 이름을 누르면 인물 상세로 이동하며,
+          성경 본문에 근거한 주요 계보입니다. 이름을 누르면 인물 상세로 이동하며,
           <span className="text-stone-400"> 회색 이름</span>은 아직 개별 페이지가 없는 인물입니다.
         </p>
       </section>

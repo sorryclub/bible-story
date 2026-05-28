@@ -25,7 +25,7 @@ function Avatar({ node, charMap, accent }) {
   );
 }
 
-function PersonRow({ node, charMap, accent }) {
+function PersonChip({ node, charMap, accent }) {
   const char = node.id ? charMap[node.id] : null;
   const content = (
     <span className="inline-flex items-center gap-2">
@@ -42,18 +42,23 @@ function PersonRow({ node, charMap, accent }) {
       </span>
     </span>
   );
+  if (char) {
+    return (
+      <Link
+        href={`/characters/${char.id}`}
+        className="inline-block hover:opacity-80 transition-opacity"
+      >
+        {content}
+      </Link>
+    );
+  }
+  return content;
+}
+
+function PersonRow({ node, charMap, accent }) {
   return (
     <div className="py-1">
-      {char ? (
-        <Link
-          href={`/characters/${char.id}`}
-          className="inline-block hover:opacity-80 transition-opacity"
-        >
-          {content}
-        </Link>
-      ) : (
-        content
-      )}
+      <PersonChip node={node} charMap={charMap} accent={accent} />
     </div>
   );
 }
@@ -78,25 +83,41 @@ function SpouseLink({ spouse, charMap }) {
 }
 
 function TreeNode({ node, charMap, accent }) {
+  if (node.ellipsis) {
+    return (
+      <div className="flex items-center gap-2 py-1 text-stone-400">
+        <span className="w-9 h-9 flex items-center justify-center text-stone-300 text-lg">
+          ⋯
+        </span>
+        <span className="text-sm">{node.note}</span>
+      </div>
+    );
+  }
+
   const unions = normalizeUnions(node);
+  // 배우자가 한 명뿐이면 부부를 한 줄에 나란히 배치 (아담 ❤ 하와)
+  const inlineCouple = unions.length === 1 && unions[0].spouse;
+
   return (
     <div>
-      {node.ellipsis ? (
-        <div className="flex items-center gap-2 py-1 text-stone-400">
-          <span className="w-9 h-9 flex items-center justify-center text-stone-300 text-lg">
-            ⋯
-          </span>
-          <span className="text-sm">{node.note}</span>
+      {/* 본인 (+ 단일 배우자는 같은 줄에 나란히) */}
+      {inlineCouple ? (
+        <div className="flex items-center gap-2 flex-wrap py-1">
+          <PersonChip node={node} charMap={charMap} accent={accent} />
+          <Heart size={14} className="text-rose-300 shrink-0" />
+          <PersonChip node={unions[0].spouse} charMap={charMap} accent={accent} />
         </div>
       ) : (
         <PersonRow node={node} charMap={charMap} accent={accent} />
       )}
 
+      {/* 자녀 */}
       {unions.length > 0 && (
         <div className="ml-[18px] sm:ml-5 pl-4 border-l border-stone-200">
           {unions.map((u, i) => (
             <div key={i} className="mb-1 last:mb-0">
-              {(u.spouse || u.label) && (
+              {/* 배우자가 여럿일 때만 배우자/라벨을 소제목으로 표기 */}
+              {!inlineCouple && (u.spouse || u.label) && (
                 <div className="flex items-center gap-1.5 py-0.5 text-sm">
                   <Heart size={11} className="text-rose-300 shrink-0" />
                   {u.spouse && <SpouseLink spouse={u.spouse} charMap={charMap} />}

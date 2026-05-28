@@ -30,7 +30,7 @@ export const lineages = [
       note: "최초의 사람",
       unions: [
         {
-          spouse: { id: "eve", name: "하와" },
+          spouse: { id: "eve", name: "하와", note: "모든 산 자의 어머니" },
           children: [
             { id: "cain", name: "가인", note: "동생 아벨을 죽임" },
             { id: "abel", name: "아벨", note: "가인에게 죽임당함" },
@@ -100,7 +100,7 @@ export const lineages = [
           note: "믿음의 조상",
           unions: [
             {
-              spouse: { id: "sarah", name: "사라" },
+              spouse: { id: "sarah", name: "사라", note: "이삭의 어머니" },
               children: [
                 {
                   id: "isaac",
@@ -108,7 +108,7 @@ export const lineages = [
                   note: "약속의 아들",
                   unions: [
                     {
-                      spouse: { id: "rebekah", name: "리브가" },
+                      spouse: { id: "rebekah", name: "리브가", note: "이삭이 사랑한 아내" },
                       children: [
                         { id: "esau", name: "에서", note: "에돔 족속의 조상" },
                         {
@@ -117,7 +117,7 @@ export const lineages = [
                           note: "'이스라엘' — 12지파의 아버지",
                           unions: [
                             {
-                              spouse: { id: "leah", name: "레아" },
+                              spouse: { id: "leah", name: "레아", note: "야곱의 첫 아내" },
                               label: "레아의 자녀",
                               children: [
                                 { name: "르우벤" },
@@ -130,7 +130,7 @@ export const lineages = [
                               ],
                             },
                             {
-                              spouse: { id: "rachel", name: "라헬" },
+                              spouse: { id: "rachel", name: "라헬", note: "야곱이 사랑한 아내" },
                               label: "라헬의 자녀",
                               children: [
                                 { id: "joseph", name: "요셉", note: "애굽의 총리" },
@@ -162,7 +162,7 @@ export const lineages = [
               ],
             },
             {
-              spouse: { name: "그두라" },
+              spouse: { name: "그두라", note: "아브라함의 후처" },
               label: "그두라의 자녀",
               children: [{ name: "미디안 등 6명", note: "창 25:1-2" }],
             },
@@ -187,13 +187,13 @@ export const lineages = [
     desc: "유다 지파에서 다윗 왕을 거쳐 예수 그리스도까지 이어지는 약속의 계보입니다. (마태복음 1장)",
     mode: "chain",
     chain: [
-      { id: "judah", name: "유다", note: "야곱의 넷째 아들", spouse: { id: "tamar", name: "다말" } },
+      { id: "judah", name: "유다", note: "야곱의 넷째 아들", spouse: { id: "tamar", name: "다말", note: "유다의 며느리" } },
       { name: "베레스", note: "유다와 다말의 아들 (창 38장)" },
       { ellipsis: true, note: "헤스론 – 람 – 아미나답 – 나손 – 살몬 (룻 4:18-21)" },
       { id: "boaz", name: "보아스", note: "룻기의 주인공", spouse: { id: "ruth", name: "룻", note: "모압 여인" } },
       { name: "오벳", note: "나오미가 품에 안은 손자 (룻 4:16-17)" },
       { name: "이새", note: "베들레헴 사람" },
-      { id: "david", name: "다윗", note: "이스라엘의 위대한 왕", spouse: { id: "bathsheba", name: "밧세바" } },
+      { id: "david", name: "다윗", note: "이스라엘의 위대한 왕", spouse: { id: "bathsheba", name: "밧세바", note: "솔로몬의 어머니" } },
       { id: "solomon", name: "솔로몬", note: "성전을 지은 지혜의 왕" },
       { id: "rehoboam", name: "르호보암", note: "그의 때에 왕국이 둘로 나뉨" },
       { ellipsis: true, note: "유다 왕들: 아비야 – 아사 – 여호사밧 …" },
@@ -203,7 +203,7 @@ export const lineages = [
       { ellipsis: true, note: "여고냐 — 바벨론 포로기" },
       { id: "zerubbabel", name: "스룹바벨", note: "포로 귀환 후 성전 재건" },
       { ellipsis: true, note: "여러 대 (마 1:13-16)" },
-      { id: "joseph_carpenter", name: "요셉", note: "마리아의 남편", spouse: { id: "mary", name: "마리아" } },
+      { id: "joseph_carpenter", name: "요셉", note: "마리아의 남편", spouse: { id: "mary", name: "마리아", note: "예수님의 어머니" } },
       { id: "jesus", name: "예수 그리스도", note: "성령으로 잉태하심 (마 1:18, 눅 1:35)" },
     ],
   },
@@ -237,7 +237,7 @@ export const lineages = [
         note: "목수",
         unions: [
           {
-            spouse: { id: "mary", name: "마리아" },
+            spouse: { id: "mary", name: "마리아", note: "예수님의 어머니" },
             children: [
               { id: "jesus", name: "예수 그리스도", note: "성령으로 잉태하심 (눅 1:35)" },
             ],

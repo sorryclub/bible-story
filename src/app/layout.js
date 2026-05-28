@@ -87,7 +87,7 @@ export default function RootLayout({ children }) {
                 <ul className="space-y-2">
                   <li><a href="/timeline" className="text-base text-stone-500 hover:text-stone-800 transition-colors">타임라인</a></li>
                   <li><a href="/characters" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 인물</a></li>
-                  <li><a href="/genealogy" className="text-base text-stone-500 hover:text-stone-800 transition-colors">인물 관계도</a></li>
+                  <li><a href="/genealogy" className="text-base text-stone-500 hover:text-stone-800 transition-colors">인물 계보</a></li>
                   <li><a href="/books" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 66권</a></li>
                   <li><a href="/map" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 지도</a></li>
                 </ul>
