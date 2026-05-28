@@ -10,6 +10,7 @@ import {
 import { getCharacter, getAllCharacters, getBook, getAllTimelineEvents } from "@/lib/db";
 import { parseVerseRef } from "@/lib/verseLink";
 import CharacterAvatar from "@/components/CharacterAvatar";
+import GlossaryText from "@/components/GlossaryText";
 import { StyledDescription, CharacterHeroAvatar } from "./CharacterDetailClient";
 
 // 주요 사건의 (창세기 2:7) 참조를 분리하여 링크로 표시
@@ -110,7 +111,7 @@ export default async function CharacterDetailPage({ params }) {
                 {character.period}
               </div>
               <p className="text-stone-500 leading-relaxed max-w-lg">
-                {character.shortDesc}
+                <GlossaryText text={character.shortDesc} />
               </p>
             </div>
           </div>

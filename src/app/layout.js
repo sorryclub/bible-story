@@ -102,6 +102,7 @@ export default function RootLayout({ children }) {
                   <li><a href="/prophecies" className="text-base text-stone-500 hover:text-stone-800 transition-colors">메시아 예언</a></li>
                   <li><a href="/gospels" className="text-base text-stone-500 hover:text-stone-800 transition-colors">4복음서 비교</a></li>
                   <li><a href="/glossary" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 사전</a></li>
+                  <li><a href="/topics" className="text-base text-stone-500 hover:text-stone-800 transition-colors">주제별 성경</a></li>
                 </ul>
               </div>
             </div>

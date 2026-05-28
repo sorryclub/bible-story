@@ -93,8 +93,8 @@ function TermCard({ t }) {
   );
 }
 
-export default function GlossaryClient() {
-  const [query, setQuery] = useState("");
+export default function GlossaryClient({ initialQuery = "" }) {
+  const [query, setQuery] = useState(initialQuery);
   const [activeCat, setActiveCat] = useState("all");
 
   const trimmed = query.trim();

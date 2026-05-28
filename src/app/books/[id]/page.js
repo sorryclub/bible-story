@@ -15,6 +15,7 @@ import ChapterList from "./ChapterList";
 import StickyBookTitle from "./StickyBookTitle";
 import BookKeyNav from "./BookKeyNav";
 import ShareButton from "./ShareButton";
+import GlossaryText from "@/components/GlossaryText";
 
 export default async function BookDetailPage({ params }) {
   const { id } = await params;
@@ -119,7 +120,7 @@ export default async function BookDetailPage({ params }) {
 
             {/* Summary */}
             <p className="text-base text-stone-600 leading-relaxed max-w-2xl mb-4">
-              {book.summary}
+              <GlossaryText text={book.summary} />
             </p>
 
             {/* Key theme tag */}

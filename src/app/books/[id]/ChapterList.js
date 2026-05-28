@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { List, ChevronDown } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
+import GlossaryText from "@/components/GlossaryText";
 
 // 읽기 글자 크기 단계 (장 요약 본문에 적용)
 const SIZES = ["text-sm", "text-base", "text-lg", "text-xl"];
@@ -14,7 +15,7 @@ const SIZE_KEY = "bibleReadSize";
 // 텍스트 내 인물 이름을 형광펜 처리
 function HighlightedText({ text, highlightName }) {
   if (!highlightName || !text.includes(highlightName)) {
-    return <>{text}</>;
+    return <GlossaryText text={text} />;
   }
   const parts = text.split(new RegExp(`(${highlightName})`, "g"));
   return (
@@ -29,7 +30,7 @@ function HighlightedText({ text, highlightName }) {
             {part}
           </mark>
         ) : (
-          <span key={i}>{part}</span>
+          <GlossaryText key={i} text={part} />
         )
       )}
     </>
@@ -198,7 +199,7 @@ export default function ChapterList({ chapters, bookColor, characters }) {
           <div
             key={ch.chapter}
             id={`ch${ch.chapter}`}
-            className={`relative rounded-lg scroll-mt-24 transition-all duration-700 overflow-hidden ${
+            className={`relative rounded-lg scroll-mt-24 transition-all duration-700 ${
               isActive
                 ? "bg-white py-4 px-4"
                 : "bg-stone-50 hover:bg-stone-100 p-3"
@@ -207,7 +208,7 @@ export default function ChapterList({ chapters, bookColor, characters }) {
           >
             {isActive && (
               <div
-                className="absolute inset-0 opacity-[0.04] pointer-events-none"
+                className="absolute inset-0 rounded-lg opacity-[0.04] pointer-events-none"
                 style={{ background: `linear-gradient(135deg, ${bookColor}, transparent 70%)` }}
               />
             )}
