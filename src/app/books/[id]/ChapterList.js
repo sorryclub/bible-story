@@ -3,7 +3,13 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { List, ChevronDown } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
+
+// 읽기 글자 크기 단계 (장 요약 본문에 적용)
+const SIZES = ["text-sm", "text-base", "text-lg", "text-xl"];
+const DEFAULT_SIZE = 1;
+const SIZE_KEY = "bibleReadSize";
 
 // 텍스트 내 인물 이름을 형광펜 처리
 function HighlightedText({ text, highlightName }) {
@@ -32,17 +38,47 @@ function HighlightedText({ text, highlightName }) {
 
 export default function ChapterList({ chapters, bookColor, characters }) {
   const [activeChapter, setActiveChapter] = useState(null);
+  const [jumpOpen, setJumpOpen] = useState(false);
+  const [sizeIdx, setSizeIdx] = useState(DEFAULT_SIZE);
   const searchParams = useSearchParams();
   const fromCharId = searchParams.get("from");
   const chParam = searchParams.get("ch");
+
+  // 저장된 글자 크기 불러오기 (effect 본문 동기 setState 회피 위해 다음 틱에)
+  useEffect(() => {
+    const saved = parseInt(localStorage.getItem(SIZE_KEY) ?? "", 10);
+    if (!isNaN(saved) && saved >= 0 && saved < SIZES.length && saved !== DEFAULT_SIZE) {
+      const t = setTimeout(() => setSizeIdx(saved), 0);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  function changeSize(next) {
+    const v = Math.min(SIZES.length - 1, Math.max(0, next));
+    setSizeIdx(v);
+    try {
+      localStorage.setItem(SIZE_KEY, String(v));
+    } catch {
+      /* 저장 불가 시 무시 */
+    }
+  }
+
+  // 특정 장으로 스크롤 이동 + 활성화
+  function goToChapter(num) {
+    setActiveChapter(num);
+    const el = document.getElementById(`ch${num}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  const summaryClass = SIZES[sizeIdx] || SIZES[DEFAULT_SIZE];
 
   // ?ch=N 쿼리로 들어온 장으로 이동 (라우터 캐시에도 반응형으로 동작)
   useEffect(() => {
     if (!chParam) return;
     const num = parseInt(chParam, 10);
     if (isNaN(num)) return;
-    setActiveChapter(num);
     const t = setTimeout(() => {
+      setActiveChapter(num);
       const el = document.getElementById(`ch${num}`);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 300);
@@ -66,8 +102,8 @@ export default function ChapterList({ chapters, bookColor, characters }) {
     if (hash && hash.startsWith("#ch")) {
       const num = parseInt(hash.replace("#ch", ""));
       if (!isNaN(num)) {
-        setActiveChapter(num);
         setTimeout(() => {
+          setActiveChapter(num);
           const el = document.getElementById(hash.slice(1));
           if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 300);
@@ -86,7 +122,72 @@ export default function ChapterList({ chapters, bookColor, characters }) {
   }, []);
 
   return (
-    <div className="space-y-2">
+    <div>
+      {/* 컨트롤: 장 바로가기 + 글자 크기 */}
+      <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
+        <button
+          type="button"
+          onClick={() => setJumpOpen((o) => !o)}
+          className="inline-flex items-center gap-1.5 text-base font-medium text-stone-600 px-3 py-1.5 rounded-lg border border-stone-200 hover:bg-stone-50 transition-colors"
+        >
+          <List size={15} />
+          장 바로가기
+          <ChevronDown size={14} className={`transition-transform ${jumpOpen ? "rotate-180" : ""}`} />
+        </button>
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-stone-400 mr-1">글자 크기</span>
+          <button
+            type="button"
+            onClick={() => changeSize(sizeIdx - 1)}
+            disabled={sizeIdx === 0}
+            aria-label="글자 작게"
+            className="w-8 h-8 rounded-md border border-stone-200 text-stone-500 hover:bg-stone-50 disabled:opacity-40 disabled:hover:bg-transparent text-sm transition-colors"
+          >
+            가
+          </button>
+          <button
+            type="button"
+            onClick={() => changeSize(DEFAULT_SIZE)}
+            aria-label="기본 글자 크기"
+            className="w-8 h-8 rounded-md border border-stone-200 text-stone-500 hover:bg-stone-50 text-base transition-colors"
+          >
+            가
+          </button>
+          <button
+            type="button"
+            onClick={() => changeSize(sizeIdx + 1)}
+            disabled={sizeIdx === SIZES.length - 1}
+            aria-label="글자 크게"
+            className="w-8 h-8 rounded-md border border-stone-200 text-stone-500 hover:bg-stone-50 disabled:opacity-40 disabled:hover:bg-transparent text-lg transition-colors"
+          >
+            가
+          </button>
+        </div>
+      </div>
+
+      {/* 장 번호 빠른 이동 그리드 */}
+      {jumpOpen && (
+        <div className="mb-5 grid grid-cols-8 sm:grid-cols-10 gap-1.5">
+          {chapters.map((ch) => (
+            <button
+              key={ch.chapter}
+              type="button"
+              onClick={() => goToChapter(ch.chapter)}
+              className={`w-full aspect-square rounded flex items-center justify-center text-sm font-medium transition-colors ${
+                activeChapter === ch.chapter
+                  ? "text-white"
+                  : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+              }`}
+              style={activeChapter === ch.chapter ? { backgroundColor: bookColor } : {}}
+            >
+              {ch.chapter}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 장 목록 */}
+      <div className="space-y-2">
       {chapters.map((ch) => {
         const isActive = activeChapter === ch.chapter;
         const chChars = (ch.characterIds || [])
@@ -122,7 +223,7 @@ export default function ChapterList({ chapters, bookColor, characters }) {
               </span>
 
               <div className="flex-1 min-w-0">
-                <p className={`text-base transition-all duration-500 ${
+                <p className={`${summaryClass} transition-all duration-500 ${
                   isActive ? "text-stone-900 font-medium" : "text-stone-700"
                 }`}>
                   <HighlightedText text={ch.summary} highlightName={fromCharName} />
@@ -158,6 +259,7 @@ export default function ChapterList({ chapters, bookColor, characters }) {
           </div>
         );
       })}
+      </div>
     </div>
   );
 }

@@ -13,6 +13,8 @@ import AnimatedSection from "./AnimatedSection";
 import { Suspense } from "react";
 import ChapterList from "./ChapterList";
 import StickyBookTitle from "./StickyBookTitle";
+import BookKeyNav from "./BookKeyNav";
+import ShareButton from "./ShareButton";
 
 export default async function BookDetailPage({ params }) {
   const { id } = await params;
@@ -58,7 +60,7 @@ export default async function BookDetailPage({ params }) {
 
   return (
     <div className="min-h-screen">
-      {/* 스크롤 시 제목이 사라지면 상단에 현재 책 이름 고정 표시 */}
+      {/* 스크롤 시 제목이 사라지면 상단에 현재 책 이름 + 진행률 고정 표시 */}
       <StickyBookTitle
         name={book.name}
         nameEn={book.nameEn}
@@ -66,16 +68,22 @@ export default async function BookDetailPage({ params }) {
         category={book.category}
       />
 
+      {/* 키보드 ← → 로 이전/다음 책 이동 */}
+      <BookKeyNav prevId={prevBook?.id} nextId={nextBook?.id} />
+
       {/* Hero */}
       <section className="py-14 pb-10 border-b border-stone-100">
         <div className="max-w-5xl mx-auto px-6">
-          <Link
-            href="/books"
-            className="inline-flex items-center gap-1.5 text-base text-stone-400 hover:text-stone-700 transition-colors mb-10"
-          >
-            <ArrowLeft size={14} />
-            성경 목록
-          </Link>
+          <div className="flex items-center justify-between gap-3 mb-10">
+            <Link
+              href="/books"
+              className="inline-flex items-center gap-1.5 text-base text-stone-400 hover:text-stone-700 transition-colors"
+            >
+              <ArrowLeft size={14} />
+              성경 목록
+            </Link>
+            <ShareButton title={`${book.name} — 진리`} text={book.summary} />
+          </div>
 
           <AnimatedSection duration={0.5}>
             {/* Badges */}
@@ -294,6 +302,12 @@ export default async function BookDetailPage({ params }) {
                   </Link>
                 )}
               </div>
+              <p className="hidden md:flex items-center gap-1.5 mt-4 pt-3 border-t border-stone-50 text-sm text-stone-400">
+                키보드
+                <kbd className="px-1.5 py-0.5 rounded border border-stone-200 bg-stone-50 text-stone-500 font-sans">←</kbd>
+                <kbd className="px-1.5 py-0.5 rounded border border-stone-200 bg-stone-50 text-stone-500 font-sans">→</kbd>
+                로 이동
+              </p>
             </AnimatedSection>
           </div>
         </div>
