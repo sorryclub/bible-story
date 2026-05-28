@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Users, Search, ArrowUpDown, X } from "lucide-react";
+import { Users, Search, ArrowUpDown, X, Network } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
 
 /* ── 한글 초성 검색 ───────────────────────────────────────── */
@@ -133,9 +133,19 @@ export default function CharactersClient({ characters, periods }) {
         <h1 className="text-3xl md:text-4xl font-bold text-stone-900 text-center mb-3">
           성경 인물
         </h1>
-        <p className="text-lg text-stone-500 text-center mb-10">
+        <p className="text-lg text-stone-500 text-center mb-5">
           하나님의 역사에 쓰임 받은 사람들 ({characters.length}명)
         </p>
+
+        <div className="flex justify-center mb-10">
+          <Link
+            href="/genealogy"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-stone-200 text-base font-medium text-stone-600 hover:bg-stone-50 transition-colors"
+          >
+            <Network size={16} className="text-stone-400" />
+            인물 관계도·족보 보기
+          </Link>
+        </div>
 
         {/* 검색 */}
         <div className="max-w-md mx-auto mb-8 relative">

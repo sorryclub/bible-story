@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
   BookOpen, Clock, Users, Home, Menu, X, Map,
-  MessageCircle, Sparkles, ScrollText, GitCompare, ChevronDown,
+  MessageCircle, Sparkles, ScrollText, GitCompare, ChevronDown, Network, Library,
 } from "lucide-react";
 
 const mainNav = [
@@ -17,6 +17,8 @@ const mainNav = [
 ];
 
 const moreNav = [
+  { href: "/genealogy", label: "인물 관계도", Icon: Network },
+  { href: "/glossary", label: "성경 사전", Icon: Library },
   { href: "/parables", label: "예수님의 비유", Icon: MessageCircle },
   { href: "/miracles", label: "예수님의 기적", Icon: Sparkles },
   { href: "/prophecies", label: "메시아 예언", Icon: ScrollText },

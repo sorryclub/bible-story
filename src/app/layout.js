@@ -87,6 +87,7 @@ export default function RootLayout({ children }) {
                 <ul className="space-y-2">
                   <li><a href="/timeline" className="text-base text-stone-500 hover:text-stone-800 transition-colors">타임라인</a></li>
                   <li><a href="/characters" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 인물</a></li>
+                  <li><a href="/genealogy" className="text-base text-stone-500 hover:text-stone-800 transition-colors">인물 관계도</a></li>
                   <li><a href="/books" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 66권</a></li>
                   <li><a href="/map" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 지도</a></li>
                 </ul>
@@ -100,6 +101,7 @@ export default function RootLayout({ children }) {
                   <li><a href="/miracles" className="text-base text-stone-500 hover:text-stone-800 transition-colors">예수님의 기적</a></li>
                   <li><a href="/prophecies" className="text-base text-stone-500 hover:text-stone-800 transition-colors">메시아 예언</a></li>
                   <li><a href="/gospels" className="text-base text-stone-500 hover:text-stone-800 transition-colors">4복음서 비교</a></li>
+                  <li><a href="/glossary" className="text-base text-stone-500 hover:text-stone-800 transition-colors">성경 사전</a></li>
                 </ul>
               </div>
             </div>
