@@ -16,6 +16,24 @@ const NAVY = "#1E3A8A";
 const WARM = "#B07830";
 const serif = { fontFamily: "var(--font-nanum-myeongjo), serif" };
 
+// 스크롤 시 부드럽게 등장 (한 번만)
+const reveal = (i = 0) => ({
+  initial: { opacity: 0, y: 22 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-60px" },
+  transition: { duration: 0.5, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] },
+});
+
+// 섹션 제목 스태거 등장
+const headContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.09 } },
+};
+const headItem = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
+
 // 브랜드 파테 크로스
 function CrossMark({ size = 14, color = NAVY }) {
   return (
@@ -37,17 +55,23 @@ function CrossMark({ size = 14, color = NAVY }) {
 // 섹션 머리말 (eyebrow + 명조 제목 + 부제)
 function SectionHead({ eyebrow, title, subtitle }) {
   return (
-    <div className="text-center mb-14">
+    <motion.div
+      className="text-center mb-14"
+      variants={headContainer}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-80px" }}
+    >
       {eyebrow && (
-        <p className="text-sm font-semibold tracking-wide uppercase mb-3" style={{ color: NAVY }}>
+        <motion.p variants={headItem} className="text-sm font-semibold tracking-wide uppercase mb-3" style={{ color: NAVY }}>
           {eyebrow}
-        </p>
+        </motion.p>
       )}
-      <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900" style={serif}>
+      <motion.h2 variants={headItem} className="text-3xl md:text-4xl font-extrabold text-stone-900" style={serif}>
         {title}
-      </h2>
-      {subtitle && <p className="text-lg text-stone-500 mt-3">{subtitle}</p>}
-    </div>
+      </motion.h2>
+      {subtitle && <motion.p variants={headItem} className="text-lg text-stone-500 mt-3">{subtitle}</motion.p>}
+    </motion.div>
   );
 }
 
@@ -330,23 +354,25 @@ export default function HomeClient({ characters, timelineEvents }) {
       {/* ── 오늘의 인물 ── */}
       <FeaturedSpotlight characters={characters} />
 
-      {/* ── 안내 ── */}
-      <section className="bg-white py-10 border-t border-stone-100">
-        <div className="max-w-3xl mx-auto px-6">
-          <div className="bg-stone-50 rounded-2xl px-4 py-5 sm:px-6 sm:py-8 border border-stone-200">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 bg-white border border-stone-200">
-                <BookOpen size={18} className="text-stone-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-stone-900 mb-2">진리는 오직 성경에 기반합니다</h3>
-                <p className="text-base text-stone-600 leading-[1.8] text-justify">
-                  모든 콘텐츠는 성경 본문에 기록된 내용만을 다루며, 특정 교단이나 교파에 소속되지 않고 어떠한 이단 단체와도 무관합니다. 추정, 전승, 외경의 내용은 포함하지 않으며, 누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다.
-                </p>
-              </div>
-            </div>
+      {/* ── 안내 (성경 기반 선언) ── */}
+      <section className="bg-white py-16 sm:py-20 border-t border-stone-100">
+        <motion.div {...reveal()} className="max-w-2xl mx-auto px-6 text-left sm:text-center">
+          <div
+            className="inline-flex w-12 h-12 rounded-2xl items-center justify-center mb-5"
+            style={{ backgroundColor: `${NAVY}0d`, boxShadow: `inset 0 0 0 1px ${NAVY}1f` }}
+          >
+            <CrossMark size={20} color={NAVY} />
           </div>
-        </div>
+          <h3 className="text-2xl font-bold text-stone-900 mb-4 sm:mb-0" style={serif}>
+            진리는 오직 성경에 기반합니다
+          </h3>
+          <div className="hidden sm:block w-12 h-px bg-stone-200 sm:mx-auto sm:my-5" />
+          <p className="text-base sm:text-lg text-stone-500 leading-[1.9] text-left sm:text-justify">
+            모든 콘텐츠는 성경 본문에 기록된 내용만을 다루며, 특정 교단이나 교파에 소속되지 않고
+            어떠한 이단 단체와도 무관합니다. 추정·전승·외경의 내용은 포함하지 않으며,
+            누구나 성경을 쉽고 정확하게 이해할 수 있도록 돕기 위해 만들어졌습니다.
+          </p>
+        </motion.div>
       </section>
 
       {/* ── 성경 한눈에 보기 ── */}
@@ -356,39 +382,43 @@ export default function HomeClient({ characters, timelineEvents }) {
 
           <div className="grid md:grid-cols-2 gap-8">
             {[
-              { href: "/books?tab=old", title: "구약성경", sub: "창조부터 메시아 대망까지", count: 39, cats: otCategories },
-              { href: "/books?tab=new", title: "신약성경", sub: "예수 그리스도와 교회의 시작", count: 27, cats: ntCategories },
-            ].map((sec) => (
-              <Link key={sec.href} href={sec.href} className="block group">
-                <div className="bg-white rounded-2xl p-8 border border-stone-200 shadow-sm transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl h-full">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-stone-900" style={serif}>{sec.title}</h3>
-                      <p className="text-base text-stone-500 mt-1">{sec.sub}</p>
-                    </div>
-                    <span className="text-4xl font-extrabold" style={{ ...serif, color: `${NAVY}33` }}>{sec.count}</span>
-                  </div>
-                  <div className="space-y-3">
-                    {sec.cats.map((cat) => (
-                      <div key={cat.name + cat.desc} className="flex items-center gap-3.5">
-                        <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                          style={{
-                            background: `linear-gradient(135deg, ${cat.color}26, ${cat.color}0f)`,
-                            boxShadow: `inset 0 0 0 1px ${cat.color}2b`,
-                          }}
-                        >
-                          <cat.Icon size={19} style={{ color: cat.color }} strokeWidth={1.9} />
+              { href: "/books?tab=old", title: "구약성경", sub: "창조부터 메시아 대망까지", count: 39, cats: otCategories, accent: WARM },
+              { href: "/books?tab=new", title: "신약성경", sub: "예수 그리스도와 교회의 시작", count: 27, cats: ntCategories, accent: NAVY },
+            ].map((sec, i) => (
+              <motion.div key={sec.href} {...reveal(i)}>
+                <Link href={sec.href} className="block group h-full">
+                  <div className="bg-white rounded-2xl border border-stone-200 shadow-sm transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl h-full">
+                    <div className="p-8">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h3 className="text-2xl font-bold text-stone-900" style={serif}>{sec.title}</h3>
+                          <p className="text-base text-stone-500 mt-1">{sec.sub}</p>
                         </div>
-                        <div className="flex-1 flex items-baseline justify-between">
-                          <span className="text-base font-medium text-stone-800">{cat.name}</span>
-                          <span className="text-base text-stone-500">{cat.count}권 · {cat.desc}</span>
-                        </div>
+                        <span className="text-4xl font-extrabold" style={{ ...serif, color: `${sec.accent}33` }}>{sec.count}</span>
                       </div>
-                    ))}
+                      <div className="space-y-3">
+                        {sec.cats.map((cat) => (
+                          <div key={cat.name + cat.desc} className="flex items-center gap-3.5">
+                            <div
+                              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                              style={{
+                                background: `linear-gradient(135deg, ${cat.color}26, ${cat.color}0f)`,
+                                boxShadow: `inset 0 0 0 1px ${cat.color}2b`,
+                              }}
+                            >
+                              <cat.Icon size={19} style={{ color: cat.color }} strokeWidth={1.9} />
+                            </div>
+                            <div className="flex-1 flex items-baseline justify-between">
+                              <span className="text-base font-medium text-stone-800">{cat.name}</span>
+                              <span className="text-base text-stone-500">{cat.count}권 · {cat.desc}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -396,29 +426,39 @@ export default function HomeClient({ characters, timelineEvents }) {
 
       {/* ── 주요 인물 ── */}
       <section className="bg-white py-24">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-5xl mx-auto px-6">
           <SectionHead eyebrow="PEOPLE" title="주요 인물" subtitle="하나님의 역사에 쓰임 받은 사람들" />
 
-          <div className="space-y-4">
-            {featuredCharacters.map((char) => (
-              <Link key={char.id} href={`/characters/${char.id}`} className="block group">
-                <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 flex items-center gap-4 sm:gap-5 transition-all duration-200 group-hover:shadow-xl group-hover:-translate-y-1">
-                  <CharacterAvatar character={char} size={96} className="w-16 h-16 sm:w-24 sm:h-24 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline flex-wrap gap-x-2">
-                      <h3 className="text-lg sm:text-xl font-bold text-stone-900">{char.name}</h3>
-                      <span className="text-sm sm:text-base text-stone-500">{char.nameEn}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {featuredCharacters.map((char, i) => (
+              <motion.div key={char.id} {...reveal(i)} className="h-full">
+                <Link href={`/characters/${char.id}`} className="block group h-full">
+                  <div className="relative h-full flex flex-col bg-white rounded-2xl border border-stone-200 shadow-sm transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-xl">
+                    <div className="flex-1 flex flex-col items-center px-5 pt-8 pb-7 text-center">
+                      {/* 아바타 (흰 배경 + 은은한 그림자) */}
+                      <div
+                        className="rounded-2xl"
+                        style={{ boxShadow: `0 14px 30px -16px rgba(28,25,23,0.25), 0 0 0 1px ${char.color}24` }}
+                      >
+                        <CharacterAvatar character={char} size={176} className="w-28 h-28 sm:w-32 sm:h-32" />
+                      </div>
+                      <h3 className="text-xl font-bold text-stone-900 mt-5" style={serif}>{char.name}</h3>
+                      <p className="text-sm text-stone-400 mt-0.5">{char.nameEn}</p>
+                      <span
+                        className="inline-block mt-3 px-3 py-1 rounded-full text-sm font-semibold"
+                        style={{ color: char.color, backgroundColor: `${char.color}14` }}
+                      >
+                        {char.role}
+                      </span>
+                      <p className="text-base text-stone-500 mt-3 leading-relaxed line-clamp-2">{char.shortDesc}</p>
                     </div>
-                    <p className="text-sm sm:text-base font-medium text-stone-700 mt-0.5 line-clamp-1">{char.role}</p>
-                    <p className="text-sm sm:text-base text-stone-500 mt-0.5 line-clamp-2 sm:line-clamp-1">{char.shortDesc}</p>
                   </div>
-                  <ArrowRight size={18} className="text-stone-300 group-hover:text-stone-500 transition-colors shrink-0" />
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
           </div>
 
-          <div className="text-center mt-10">
+          <motion.div {...reveal()} className="text-center mt-12">
             <Link
               href="/characters"
               className="inline-flex items-center gap-2 px-6 py-3 text-white rounded-xl font-semibold transition-all hover:-translate-y-0.5"
@@ -427,38 +467,54 @@ export default function HomeClient({ characters, timelineEvents }) {
               성경 인물 더 보기
               <ArrowRight size={16} />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── 핵심 사건 ── */}
       <section className="bg-[#FAFAF7] py-24 border-t border-stone-100">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="max-w-3xl mx-auto px-6">
           <SectionHead eyebrow="TIMELINE" title="성경의 핵심 사건" subtitle="역사를 바꾼 하나님의 다섯 장면" />
 
-          <div className="relative">
-            <div className="absolute left-4 sm:left-6 top-2 bottom-2 w-0.5 bg-stone-200" />
-            <div className="space-y-6">
-              {keyMoments.map((event) => (
-                <div key={event.id} className="relative pl-10 sm:pl-16">
+          <div className="space-y-5">
+            {keyMoments.map((event, i) => (
+              <motion.div key={event.id} {...reveal(i)} className="flex gap-4 sm:gap-5">
+                {/* 넘버 배지 + 연결선 */}
+                <div className="flex flex-col items-center shrink-0">
                   <div
-                    className="absolute left-[6px] sm:left-[15px] top-6 w-5 h-5 rounded-full border-[3px] border-white shadow-sm"
-                    style={{ backgroundColor: event.color }}
-                  />
-                  <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 sm:p-6 transition-all hover:shadow-lg">
-                    <p className="text-base font-semibold mb-1" style={{ color: event.color }}>
-                      {event.era}
-                    </p>
-                    <h3 className="text-xl font-bold text-stone-900 mb-2">{event.title}</h3>
-                    <p className="text-base text-stone-700 leading-relaxed">{event.description}</p>
-                    <p className="text-base text-stone-400 mt-2">{event.verse}</p>
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white"
+                    style={{
+                      background: `linear-gradient(135deg, ${event.color}, ${event.color}cc)`,
+                      boxShadow: `0 9px 20px -8px ${event.color}99`,
+                    }}
+                  >
+                    <span className="text-xl sm:text-2xl font-extrabold" style={serif}>{i + 1}</span>
                   </div>
+                  {i < keyMoments.length - 1 && (
+                    <div
+                      className="flex-1 w-0.5 mt-1.5 rounded-full"
+                      style={{ background: `linear-gradient(${event.color}40, ${event.color}10)` }}
+                    />
+                  )}
                 </div>
-              ))}
-            </div>
+
+                {/* 카드 */}
+                <div className="flex-1 mb-1 bg-white rounded-2xl border border-stone-200 shadow-sm p-5 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-sm font-semibold mb-2.5"
+                    style={{ color: event.color, backgroundColor: `${event.color}14` }}
+                  >
+                    {event.era}
+                  </span>
+                  <h3 className="text-xl font-bold text-stone-900 mb-2" style={serif}>{event.title}</h3>
+                  <p className="text-base text-stone-700 leading-relaxed">{event.description}</p>
+                  <p className="text-sm text-stone-400 mt-2.5">{event.verse}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
-          <div className="text-center mt-12">
+          <motion.div {...reveal()} className="text-center mt-12">
             <Link
               href="/timeline"
               className="inline-flex items-center gap-2 px-6 py-3 text-white rounded-xl font-semibold transition-all hover:-translate-y-0.5"
@@ -467,7 +523,7 @@ export default function HomeClient({ characters, timelineEvents }) {
               성경 타임라인 보기
               <ArrowRight size={16} />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -477,22 +533,35 @@ export default function HomeClient({ characters, timelineEvents }) {
           <SectionHead eyebrow="EXPLORE" title="더 깊이 알아보기" subtitle="성경을 다양한 시각으로 탐구하세요" />
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {exploreItems.map(({ href, Icon, title, desc, color }) => (
-              <Link key={href} href={href} className="block group">
-                <div className="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-xl h-full">
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                    style={{
-                      background: `linear-gradient(135deg, ${color}26, ${color}0f)`,
-                      boxShadow: `inset 0 0 0 1px ${color}2b`,
-                    }}
-                  >
-                    <Icon size={22} style={{ color }} strokeWidth={1.8} />
+            {exploreItems.map(({ href, Icon, title, desc, color }, i) => (
+              <motion.div key={href} {...reveal(i)} className="h-full">
+                <Link href={href} className="block group h-full">
+                  <div className="relative h-full flex flex-col bg-white rounded-2xl p-6 border border-stone-200 shadow-sm overflow-hidden transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-xl">
+                    {/* 호버 시 은은한 색 워시 */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{ background: `linear-gradient(160deg, ${color}0f, transparent 62%)` }}
+                    />
+                    <div
+                      className="relative w-12 h-12 rounded-2xl flex items-center justify-center mb-4 text-white"
+                      style={{
+                        background: `linear-gradient(135deg, ${color}, ${color}cc)`,
+                        boxShadow: `0 9px 20px -8px ${color}99`,
+                      }}
+                    >
+                      <Icon size={22} strokeWidth={1.9} />
+                    </div>
+                    <h3 className="relative text-lg font-bold text-stone-900 mb-2" style={serif}>{title}</h3>
+                    <p className="relative flex-1 text-base text-stone-500 leading-relaxed">{desc}</p>
+                    <span
+                      className="relative inline-flex items-center gap-1 mt-4 text-sm font-semibold transition-transform duration-200 group-hover:translate-x-1"
+                      style={{ color }}
+                    >
+                      살펴보기 <ArrowRight size={14} />
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold text-stone-900 mb-2">{title}</h3>
-                  <p className="text-base text-stone-500 leading-relaxed">{desc}</p>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -507,19 +576,19 @@ export default function HomeClient({ characters, timelineEvents }) {
           <CrossMark size={460} color="#ffffff" />
         </div>
         <div className="relative max-w-3xl mx-auto px-6 text-center space-y-14">
-          <div>
+          <motion.div {...reveal(0)}>
             <blockquote className="text-2xl md:text-3xl leading-relaxed mb-5" style={serif}>
               “태초에 하나님이 천지를 창조하시니라”
             </blockquote>
             <p className="text-base text-white/60 font-medium">창세기 1:1</p>
-          </div>
+          </motion.div>
           <div className="w-16 h-px bg-white/25 mx-auto" />
-          <div>
+          <motion.div {...reveal(1)}>
             <blockquote className="text-2xl md:text-3xl leading-relaxed mb-5" style={serif}>
               “하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니, 이는 그를 믿는 자마다 멸망하지 않고 영생을 얻게 하려 하심이라”
             </blockquote>
             <p className="text-base text-white/60 font-medium">요한복음 3:16</p>
-          </div>
+          </motion.div>
         </div>
       </section>
     </div>
