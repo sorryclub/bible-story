@@ -44,6 +44,57 @@ body {
   border-radius: 0.75rem;
 }
 
+/* ── Hero ambient light ── */
+@keyframes hero-breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@keyframes hero-cue {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+@keyframes godray-breathe {
+  0%, 100% { opacity: calc(var(--op) * 0.5); }
+  50% { opacity: var(--op); }
+}
+
+.hero-glow-warm { animation: hero-breathe 9s ease-in-out infinite; will-change: opacity; }
+.hero-cue { animation: hero-cue 2.2s ease-in-out infinite; }
+
+/* 빛줄기 */
+.godrays {
+  transform: translateX(var(--parallax, 0)) rotate(var(--tilt, 0deg));
+  transform-origin: 50% 0;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.godray {
+  position: absolute;
+  top: -18%;
+  left: 50%;
+  width: 14vw;
+  max-width: 150px;
+  height: 150%;
+  transform-origin: top center;
+  transform: translateX(-50%) rotate(var(--angle, 0deg));
+  background: linear-gradient(
+    to bottom,
+    rgba(224, 180, 110, 0.55),
+    rgba(224, 180, 110, 0.16) 42%,
+    transparent 78%
+  );
+  filter: blur(26px);
+  opacity: var(--op, 0.15);
+  animation: godray-breathe var(--dur, 8s) ease-in-out var(--delay, 0s) infinite;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow-warm, .hero-cue, .godray {
+    animation: none !important;
+  }
+  .godrays { transition: none; }
+}
+
 /* Timeline */
 .timeline-line {
   position: absolute;

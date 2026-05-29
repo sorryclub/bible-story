@@ -1,15 +1,19 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, Clock, Users, ArrowRight, MessageCircle,
   Sparkles, ScrollText, GitCompare, Map,
   Mail, Cross, Scroll, Landmark, Feather, Flame, Church, Crown,
+  ChevronDown, ChevronLeft, ChevronRight, Quote,
 } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
+import GodRays from "@/components/GodRays";
 
 const NAVY = "#1E3A8A";
+const WARM = "#B07830";
 const serif = { fontFamily: "var(--font-nanum-myeongjo), serif" };
 
 // 브랜드 파테 크로스
@@ -69,6 +73,151 @@ const exploreItems = [
   { href: "/map", Icon: Map, title: "성경 지도", desc: "고대 근동의 성경 무대를 탐험", color: "#A03040" },
 ];
 
+const FEATURED_IDS = ["noah", "joseph", "ruth", "elijah", "daniel", "esther", "peter", "mary_magdalene"];
+
+// 오늘의 인물 — 매일 시작 인물이 바뀌고, 좌우/점으로 탐색
+function FeaturedSpotlight({ characters }) {
+  const featured = FEATURED_IDS
+    .map((id) => characters.find((c) => c.id === id))
+    .filter(Boolean);
+
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  // 마운트 후(클라이언트 전용) 날짜 기반으로 시작 인물 선택 → 매일 신선함
+  useEffect(() => {
+    if (featured.length === 0) return;
+    const day = Math.floor(Date.now() / 86400000);
+    setIdx(day % featured.length);
+  }, [featured.length]);
+
+  useEffect(() => {
+    if (paused || featured.length <= 1) return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % featured.length), 6000);
+    return () => clearInterval(t);
+  }, [paused, featured.length]);
+
+  if (featured.length === 0) return null;
+
+  const char = featured[idx];
+  const verse = char.keyVerses?.[0];
+  const go = (dir) => setIdx((i) => (i + dir + featured.length) % featured.length);
+
+  return (
+    <section className="bg-[#FAFAF7] py-24 border-t border-stone-100">
+      <div className="max-w-4xl mx-auto px-6">
+        <SectionHead eyebrow="SPOTLIGHT" title="오늘의 인물" subtitle="하나님의 역사 속 한 사람을 만나보세요" />
+
+        <div
+          className="relative"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div className="relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm">
+            {/* 인물 색 액센트 (상단 라인) */}
+            <div
+              className="absolute top-0 inset-x-0 h-1 pointer-events-none transition-colors duration-500"
+              style={{ background: `linear-gradient(90deg, ${char.color}, ${char.color}55 55%, transparent)` }}
+            />
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={char.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="relative grid sm:grid-cols-[auto_1fr] gap-6 sm:gap-9 p-7 sm:p-10 items-center min-h-[280px]"
+              >
+                <div
+                  className="relative mx-auto sm:mx-0 rounded-2xl"
+                  style={{ boxShadow: `0 14px 32px -12px ${char.color}66, 0 0 0 1px ${char.color}24` }}
+                >
+                  <CharacterAvatar
+                    character={char}
+                    size={176}
+                    className="w-36 h-36 sm:w-44 sm:h-44 shrink-0"
+                  />
+                </div>
+
+                <div className="text-center sm:text-left">
+                  <div className="flex items-baseline justify-center sm:justify-start flex-wrap gap-x-2.5">
+                    <h3 className="text-3xl font-bold text-stone-900" style={serif}>{char.name}</h3>
+                    <span className="text-base text-stone-400">{char.nameEn}</span>
+                  </div>
+
+                  <span
+                    className="inline-block mt-3 px-3 py-1 rounded-full text-sm font-semibold"
+                    style={{ color: char.color, backgroundColor: `${char.color}14` }}
+                  >
+                    {char.role}
+                  </span>
+
+                  <p className="mt-4 text-base text-stone-600 leading-relaxed">{char.shortDesc}</p>
+
+                  {verse && (
+                    <div className="mt-5 flex items-start gap-2.5 text-left">
+                      <Quote size={16} className="shrink-0 mt-1" style={{ color: `${char.color}99` }} />
+                      <p className="text-sm text-stone-500 leading-relaxed">
+                        <span className="font-semibold text-stone-700">{verse.ref}</span>
+                        {verse.summary ? ` — ${verse.summary}` : null}
+                      </p>
+                    </div>
+                  )}
+
+                  <Link
+                    href={`/characters/${char.id}`}
+                    className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl font-semibold text-white transition-all hover:-translate-y-0.5"
+                    style={{ backgroundColor: NAVY }}
+                  >
+                    이야기 보기
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* 좌우 화살표 */}
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label="이전 인물"
+            className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-stone-200 shadow-sm flex items-center justify-center text-stone-500 hover:text-stone-900 hover:shadow-md transition-all"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label="다음 인물"
+            className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-stone-200 shadow-sm flex items-center justify-center text-stone-500 hover:text-stone-900 hover:shadow-md transition-all"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+
+        {/* 점 인디케이터 */}
+        <div className="flex items-center justify-center gap-2.5 mt-7">
+          {featured.map((c, i) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setIdx(i)}
+              aria-label={`${c.name} 보기`}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{
+                width: i === idx ? 26 : 8,
+                backgroundColor: i === idx ? NAVY : "#D6D3D1",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HomeClient({ characters, timelineEvents }) {
   const featuredCharacters = characters.filter((c) =>
     ["abraham", "moses", "david", "jesus", "paul"].includes(c.id)
@@ -79,19 +228,48 @@ export default function HomeClient({ characters, timelineEvents }) {
   return (
     <div className="min-h-screen">
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#FAFAF7]">
-        {/* 은은한 상단 글로우 */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#FAFAF7] flex items-center min-h-[88vh]">
+        {/* 빛줄기 (God rays, 마우스 패럴랙스) */}
+        <GodRays />
+
+        {/* 가독성 오버레이 + 다음 섹션으로의 페이드 */}
         <div
-          className="absolute inset-x-0 top-0 h-[460px] pointer-events-none"
-          style={{ background: "radial-gradient(58% 100% at 50% 0%, rgba(30,58,138,0.07), transparent)" }}
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+          style={{ background: "radial-gradient(56% 50% at 50% 44%, rgba(250,250,247,0.5), transparent 74%)" }}
         />
-        <div className="relative max-w-4xl mx-auto px-6 pt-24 pb-20 text-center">
+        <div
+          className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
+          aria-hidden="true"
+          style={{ background: "linear-gradient(to bottom, transparent, #FAFAF7)" }}
+        />
+
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-6 py-24 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-3 mb-7"
+          >
+            <span className="h-px w-10" style={{ background: `${WARM}59` }} />
+            <span className="text-xs font-semibold tracking-[0.3em] uppercase text-stone-500">
+              The Story of God
+            </span>
+            <span className="h-px w-10" style={{ background: `${WARM}59` }} />
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
-            className="text-5xl md:text-7xl font-extrabold text-stone-900 tracking-tight leading-[1.1]"
-            style={serif}
+            transition={{ delay: 0.08, duration: 0.6 }}
+            className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1]"
+            style={{
+              ...serif,
+              backgroundImage: `linear-gradient(180deg, #1C1917 0%, #2B2620 60%, ${NAVY} 130%)`,
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              color: "transparent",
+            }}
           >
             하나님의 이야기
           </motion.h1>
@@ -99,7 +277,7 @@ export default function HomeClient({ characters, timelineEvents }) {
           <motion.p
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18, duration: 0.55 }}
+            transition={{ delay: 0.2, duration: 0.55 }}
             className="mt-6 text-xl text-stone-500 max-w-xl mx-auto leading-relaxed"
           >
             창세기부터 요한계시록까지,
@@ -110,7 +288,7 @@ export default function HomeClient({ characters, timelineEvents }) {
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.28, duration: 0.55 }}
+            transition={{ delay: 0.3, duration: 0.55 }}
             className="mt-10 flex flex-col items-stretch sm:flex-row sm:flex-wrap sm:items-center justify-center gap-3"
           >
             <Link
@@ -123,21 +301,34 @@ export default function HomeClient({ characters, timelineEvents }) {
             </Link>
             <Link
               href="/characters"
-              className="flex w-full justify-center sm:inline-flex sm:w-auto items-center gap-2 px-7 py-3.5 bg-white text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-stone-50"
+              className="flex w-full justify-center sm:inline-flex sm:w-auto items-center gap-2 px-7 py-3.5 bg-white/80 backdrop-blur text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-white"
             >
               <Users size={18} />
               성경 인물
             </Link>
             <Link
               href="/books"
-              className="flex w-full justify-center sm:inline-flex sm:w-auto items-center gap-2 px-7 py-3.5 bg-white text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-stone-50"
+              className="flex w-full justify-center sm:inline-flex sm:w-auto items-center gap-2 px-7 py-3.5 bg-white/80 backdrop-blur text-stone-800 border border-stone-300 rounded-xl font-semibold transition-colors hover:bg-white"
             >
               <BookOpen size={18} />
               성경 66권
             </Link>
           </motion.div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          className="absolute z-10 bottom-7 left-1/2 -translate-x-1/2 pointer-events-none"
+          aria-hidden="true"
+        >
+          <ChevronDown size={22} className="hero-cue text-stone-400" />
+        </motion.div>
       </section>
+
+      {/* ── 오늘의 인물 ── */}
+      <FeaturedSpotlight characters={characters} />
 
       {/* ── 안내 ── */}
       <section className="bg-white py-10 border-t border-stone-100">
