@@ -16,6 +16,7 @@ import StickyBookTitle from "./StickyBookTitle";
 import BookKeyNav from "./BookKeyNav";
 import ShareButton from "./ShareButton";
 import GlossaryText from "@/components/GlossaryText";
+import { deepenColor } from "@/lib/color";
 
 export default async function BookDetailPage({ params }) {
   const { id } = await params;
@@ -58,6 +59,9 @@ export default async function BookDetailPage({ params }) {
     currentIndex < allBooks.length - 1 ? allBooks[currentIndex + 1] : null;
 
   const catInfo = categories[book.category];
+  // 밝은 책 색상은 흰 글씨/색 글씨가 또렷하게 보이도록 진한 톤으로 보정
+  const accent = deepenColor(book.color);
+  const catColor = deepenColor(catInfo?.color || book.color);
 
   return (
     <div className="min-h-screen">
@@ -65,7 +69,7 @@ export default async function BookDetailPage({ params }) {
       <StickyBookTitle
         name={book.name}
         nameEn={book.nameEn}
-        color={catInfo?.color || book.color}
+        color={catColor}
         category={book.category}
       />
 
@@ -92,8 +96,8 @@ export default async function BookDetailPage({ params }) {
               <span
                 className="text-base px-3 py-1 rounded-full font-medium"
                 style={{
-                  backgroundColor: `${catInfo?.color || book.color}14`,
-                  color: catInfo?.color || book.color,
+                  backgroundColor: `${catColor}14`,
+                  color: catColor,
                 }}
               >
                 {book.category}
@@ -101,8 +105,8 @@ export default async function BookDetailPage({ params }) {
               <span
                 className="text-base px-3 py-1 rounded-full font-medium"
                 style={{
-                  backgroundColor: `${book.color}14`,
-                  color: book.color,
+                  backgroundColor: `${accent}14`,
+                  color: accent,
                 }}
               >
                 {book.chapters}장
@@ -127,8 +131,8 @@ export default async function BookDetailPage({ params }) {
             <span
               className="inline-flex items-center gap-1.5 text-base px-3 py-1.5 rounded-full font-medium"
               style={{
-                backgroundColor: `${book.color}10`,
-                color: book.color,
+                backgroundColor: `${accent}10`,
+                color: accent,
               }}
             >
               <Star size={12} />
@@ -174,20 +178,20 @@ export default async function BookDetailPage({ params }) {
                       <div className="flex items-start gap-3 w-full">
                         <span
                           className="text-base font-bold shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white"
-                          style={{ backgroundColor: book.color }}
+                          style={{ backgroundColor: accent }}
                         >
                           {i + 1}
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-baseline gap-2 mb-1">
-                            <span className="text-base text-stone-400">
+                            <span className="text-sm font-semibold shrink-0 text-stone-600">
                               {highlight.chapter}장
                             </span>
                             <h4 className="font-semibold text-stone-800 text-base">
                               {highlight.title}
                             </h4>
                           </div>
-                          <p className="text-base text-stone-500 leading-relaxed">
+                          <p className="text-base text-stone-600 leading-relaxed">
                             {highlight.desc}
                           </p>
                         </div>
@@ -210,7 +214,7 @@ export default async function BookDetailPage({ params }) {
               </h2>
               {chapters && chapters.length > 0 ? (
                 <Suspense fallback={<div className="text-stone-400">로딩 중...</div>}>
-                  <ChapterList chapters={chapters} bookColor={book.color} characters={allCharacters} />
+                  <ChapterList chapters={chapters} bookColor={accent} characters={allCharacters} />
                 </Suspense>
               ) : (
                 <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-1.5">
@@ -243,7 +247,7 @@ export default async function BookDetailPage({ params }) {
                   <span className="font-medium text-stone-700 flex items-center gap-1.5">
                     <span
                       className="inline-block w-2 h-2 rounded-full"
-                      style={{ backgroundColor: catInfo?.color || book.color }}
+                      style={{ backgroundColor: catColor }}
                     />
                     {book.category}
                   </span>
@@ -269,7 +273,7 @@ export default async function BookDetailPage({ params }) {
             <AnimatedSection delay={0.4} duration={0.5} className="bg-white rounded-xl p-5 border border-stone-100">
               <h3 className="text-base font-semibold text-stone-700 mb-4 flex items-center gap-1.5">
                 <BookOpen size={14} className="text-stone-400" />
-                다른 책 보기
+                다른 권 보기
               </h3>
               <div className="space-y-2">
                 {prevBook && (

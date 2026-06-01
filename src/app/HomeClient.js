@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -97,23 +97,31 @@ const exploreItems = [
   { href: "/map", Icon: Map, title: "성경 지도", desc: "고대 근동의 성경 무대를 탐험", color: "#A03040" },
 ];
 
-const FEATURED_IDS = ["noah", "joseph", "ruth", "elijah", "daniel", "esther", "peter", "mary_magdalene"];
+const DAILY_COUNT = 5; // 하루에 보여줄 인물 수 (전체 인물을 여러 날에 걸쳐 순환)
 
-// 오늘의 인물 — 매일 시작 인물이 바뀌고, 좌우/점으로 탐색
+// 오늘의 인물 — 매일 전체 인물 중 5명이 순환 노출, 그날 5명은 6초마다 자동 전환
 function FeaturedSpotlight({ characters }) {
-  const featured = FEATURED_IDS
-    .map((id) => characters.find((c) => c.id === id))
-    .filter(Boolean);
+  // 카드에 필요한 정보(소개·대표구절)가 있는 인물만 후보로
+  const pool = useMemo(
+    () => characters.filter((c) => c.shortDesc && c.keyVerses?.length),
+    [characters]
+  );
 
+  // SSR/최초 렌더는 결정적으로(앞 5명) → 하이드레이션 불일치 방지
+  const [featured, setFeatured] = useState(() => pool.slice(0, DAILY_COUNT));
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  // 마운트 후(클라이언트 전용) 날짜 기반으로 시작 인물 선택 → 매일 신선함
+  // 마운트 후 날짜 기반으로 그날의 5명 선택 → 매일 다음 묶음으로 넘어가며 전체 순환
   useEffect(() => {
-    if (featured.length === 0) return;
+    if (pool.length === 0) return;
+    const n = Math.min(DAILY_COUNT, pool.length);
     const day = Math.floor(Date.now() / 86400000);
-    setIdx(day % featured.length);
-  }, [featured.length]);
+    const start = (day * n) % pool.length;
+    const group = Array.from({ length: n }, (_, i) => pool[(start + i) % pool.length]);
+    setFeatured(group);
+    setIdx(0);
+  }, [pool]);
 
   useEffect(() => {
     if (paused || featured.length <= 1) return;
@@ -138,10 +146,15 @@ function FeaturedSpotlight({ characters }) {
           onMouseLeave={() => setPaused(false)}
         >
           <div className="relative overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm">
-            {/* 인물 색 액센트 (상단 라인) */}
+            {/* 인물 색 액센트 — 선 아래로 옅게 내려앉는 색 워시(빈 느낌 방지) */}
             <div
-              className="absolute top-0 inset-x-0 h-1 pointer-events-none transition-colors duration-500"
-              style={{ background: `linear-gradient(90deg, ${char.color}, ${char.color}55 55%, transparent)` }}
+              className="absolute top-0 inset-x-0 h-28 pointer-events-none transition-colors duration-700"
+              style={{ background: `linear-gradient(180deg, ${char.color}0a, transparent)` }}
+            />
+            {/* 양끝으로 잔잔하게 사라지는 가는 선 */}
+            <div
+              className="absolute top-0 inset-x-0 h-px pointer-events-none transition-colors duration-700"
+              style={{ background: `linear-gradient(90deg, transparent, ${char.color}4d 28%, ${char.color}4d 72%, transparent)` }}
             />
 
             <AnimatePresence mode="wait">
