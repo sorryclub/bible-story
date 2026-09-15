@@ -13,6 +13,12 @@ import CharacterAvatar from "@/components/CharacterAvatar";
 import GlossaryText from "@/components/GlossaryText";
 import { StyledDescription, CharacterHeroAvatar } from "./CharacterDetailClient";
 
+// 처음 방문될 때 한 번 만들어 보관하고 계속 쓴다(app/page.js 참고). DB 콘텐츠를 고치면 재배포.
+export const dynamic = "force-static";
+export async function generateStaticParams() {
+  return [];
+}
+
 // 주요 사건의 (창세기 2:7) 참조를 분리하여 링크로 표시
 function StyledEvent({ text, characterId }) {
   const match = text.match(/^(.*?)\s*(\([^)]*\d+[:\d\-,\s장]*[^)]*\))$/);

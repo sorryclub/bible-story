@@ -18,6 +18,12 @@ import ShareButton from "./ShareButton";
 import GlossaryText from "@/components/GlossaryText";
 import { deepenColor } from "@/lib/color";
 
+// 처음 방문될 때 한 번 만들어 보관하고 계속 쓴다(app/page.js 참고). DB 콘텐츠를 고치면 재배포.
+export const dynamic = "force-static";
+export async function generateStaticParams() {
+  return [];
+}
+
 export default async function BookDetailPage({ params }) {
   const { id } = await params;
   const [book, allBooks, allCharacters, chapters] = await Promise.all([

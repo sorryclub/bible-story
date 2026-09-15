@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Search, X, BookOpen, Library } from "lucide-react";
 import { glossaryCategories, glossaryTerms } from "@/data/glossary";
@@ -93,9 +93,15 @@ function TermCard({ t }) {
   );
 }
 
-export default function GlossaryClient({ initialQuery = "" }) {
-  const [query, setQuery] = useState(initialQuery);
+export default function GlossaryClient() {
+  const [query, setQuery] = useState("");
   const [activeCat, setActiveCat] = useState("all");
+
+  // ?term= 은 브라우저에서 읽는다. 서버에서 읽으면 페이지가 요청마다 렌더된다.
+  useEffect(() => {
+    const term = new URLSearchParams(window.location.search).get("term");
+    if (term) setQuery(term);
+  }, []);
 
   const trimmed = query.trim();
   const searching = trimmed.length > 0;

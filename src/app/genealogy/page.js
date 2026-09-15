@@ -3,6 +3,9 @@ import { lineages } from "@/data/genealogy";
 import GenealogyTree from "./GenealogyTree";
 import { Network, BookOpen } from "lucide-react";
 
+// 빌드 때 미리 만든다(app/page.js 참고). DB 콘텐츠를 고치면 재배포.
+export const dynamic = "force-static";
+
 export const metadata = {
   title: "성경 인물 계보",
   description:

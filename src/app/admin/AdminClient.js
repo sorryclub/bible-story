@@ -55,11 +55,11 @@ export default function AdminClient({ stats }) {
             </div>
           </div>
 
-          {/* 인기 페이지 */}
+          {/* 첫 방문 페이지 — 방문은 사람(IP)마다 하루 1번, 처음 들어온 페이지로만 기록된다 */}
           <div className="bg-white rounded-xl p-6 border border-stone-200 shadow-sm">
             <h2 className="text-lg font-bold text-stone-900 mb-4 flex items-center gap-2">
               <Link2 size={18} className="text-stone-500" />
-              인기 페이지
+              첫 방문 페이지
             </h2>
             <div className="space-y-2 max-h-[400px] overflow-y-auto">
               {stats.topPages.map((p, i) => (

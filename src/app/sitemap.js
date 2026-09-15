@@ -1,5 +1,8 @@
 import { getAllCharacters, getAllBooks } from "@/lib/db";
 
+// 빌드 때 미리 만든다(app/page.js 참고). DB 콘텐츠를 고치면 재배포.
+export const dynamic = "force-static";
+
 const BASE = "https://xn--oy2b970a.com"; // 진리.com
 
 export default async function sitemap() {
