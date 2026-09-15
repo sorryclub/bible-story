@@ -13,7 +13,11 @@ const nextConfig = {
     NEXT_PUBLIC_ASSET_VERSION: ASSET_VERSION,
   },
   images: {
-    // R2 인물/스토리 이미지 원본 호스트 (next/image 최적화 허용)
+    // 이미지 최적화를 끈다. 인물 사진은 R2 원본(40~50KB JPG)을 브라우저가 직접 받는다.
+    // 최적화 캐시가 4시간마다 비어 월 2.8K 변환(Hobby 한도 5K)과 전송량 대부분을 쓰고 있었다.
+    // 원본이 이미 작고 바뀔 일도 없어 최적화로 얻는 게 거의 없다.
+    unoptimized: true,
+    // R2 인물/스토리 이미지 원본 호스트
     remotePatterns: [
       {
         protocol: "https",
@@ -21,10 +25,6 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-    // 최적화 결과 캐시(Next 16 기본 4시간). 캐시 무효화는 ?v=ASSET_VERSION 이 담당한다:
-    // R2에서 이미지를 덮어쓴 뒤 (빈 커밋으로라도) 재배포하면 커밋 SHA가 바뀌어 URL이 갱신되고
-    // Vercel 엣지 캐시(이미지 ~1시간)를 우회해 즉시 새 이미지가 반영된다.
-    minimumCacheTTL: 14400,
   },
 };
 
